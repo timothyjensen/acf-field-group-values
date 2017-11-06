@@ -2,7 +2,12 @@
 This component provides a convenient alternative to ACF's `get_field()` function.  It can be installed as a WordPress plugin, or required as a dependency (preferred) within your theme or plugin.
 
 ## Installation
-Download the latest release and install it like a typical WordPress plugin. 
+The recommended way to install this component is with Composer:
+```
+composer require timothyjensen/acf-field-group-values
+```
+
+Alternatively, you can download the latest release and install it like a typical WordPress plugin. 
 
 ## Usage
 
