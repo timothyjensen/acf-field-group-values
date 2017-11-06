@@ -25,8 +25,8 @@ if ( ! function_exists( 'get_all_custom_field_meta' ) ) :
 	 *
 	 * @link    https://www.timjensen.us/acf-get-field-alternative/
 	 *
-	 * @param integer $post_id Required. Post ID, or 'options' when retrieving option values.
-	 * @param array   $config  Required. ACF field group JSON reformatted as an array.
+	 * @param int|string $post_id Required. Post ID, or 'options' when retrieving option values.
+	 * @param array      $config  Required. ACF field group JSON reformatted as an array.
 	 * @return array
 	 */
 	function get_all_custom_field_meta( $post_id, array $config ) {
