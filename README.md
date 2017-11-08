@@ -40,6 +40,9 @@ $acf_option_values = get_all_custom_field_meta( 'option', $config );
 ```
 
 ## Example Results
+
+In the test results below `get_all_custom_field_meta()` was 600% faster than `get_field()` and required 19 fewer database queries.
+
 ```php
 <?php
 
