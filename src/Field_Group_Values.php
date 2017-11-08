@@ -237,11 +237,12 @@ if ( ! class_exists( 'TimJensen\ACF\Field_Group_Values' ) ) :
 
 			foreach ( $field_value as $index => $current_layout_type ) {
 
-				$this->config = $layout_types[ $current_layout_type ]['sub_fields'];
-
-				if ( empty( $this->config ) ) {
+				// Check if the layout has been deleted from the ACF group.
+				if ( empty( $layout_types[ $current_layout_type ]['sub_fields'] ) ) {
 					continue;
 				}
+
+				$this->config = $layout_types[ $current_layout_type ]['sub_fields'];
 
 				foreach ( $this->config as &$field_config ) {
 					$field_config['field_key_prefix'] = $field_key . "_{$index}_";
@@ -268,7 +269,6 @@ if ( ! class_exists( 'TimJensen\ACF\Field_Group_Values' ) ) :
 		 */
 		protected function get_clone_field_values( array $field ) {
 
-			/** @TODO find a way to write to the results property without destroying the formatting. * */
 			$results = $this->results;
 
 			$fields_to_clone = [];
@@ -341,7 +341,6 @@ if ( ! class_exists( 'TimJensen\ACF\Field_Group_Values' ) ) :
 		 */
 		protected function get_group_field_values( array $field, string $field_key, string $field_value ) {
 
-			/** @TODO find a way to write to the results property without destroying the formatting. * */
 			$results = $this->results;
 
 			$this->config = $field['sub_fields'];
@@ -365,15 +364,10 @@ if ( ! class_exists( 'TimJensen\ACF\Field_Group_Values' ) ) :
 		 */
 		protected function get_repeater_field_values( array $field, string $field_key, string $field_value ) {
 
-			/** @TODO find a way to write to the results property without destroying the formatting. * */
 			$results = $this->results;
 
 			for ( $i = 0; $i < $field_value; $i ++ ) {
 				$this->config = $field['sub_fields'];
-
-				if ( empty( $this->config ) ) {
-					continue;
-				}
 
 				foreach ( $this->config as &$field_config ) {
 					$field_config['field_key_prefix'] = $field_key . "_{$i}_";
