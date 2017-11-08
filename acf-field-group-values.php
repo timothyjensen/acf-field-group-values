@@ -21,7 +21,7 @@ require __DIR__ . '/src/Field_Group_Values.php';
 if ( ! function_exists( 'get_all_custom_field_meta' ) ) :
 
 	/**
-	 * Instantiates the Field_Group_values class and returns the results.
+	 * Instantiates the Field_Group_Values class and returns the results.
 	 *
 	 * @link    https://www.timjensen.us/acf-get-field-alternative/
 	 *
