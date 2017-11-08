@@ -2,12 +2,12 @@
 /**
  * Plugin Name:     ACF Field Group Values
  * Plugin URI:      https://github.com/timothyjensen/acf-field-group-values
- * Description:     Retrieve all post meta and option values for the specified ACF field group
+ * Description:     Retrieve all post meta and option values for the specified ACF field group.
  * Author:          Tim Jensen
  * Author URI:      https://www.timjensen.us
  * Text Domain:     acf-field-group-values
  * Domain Path:     /languages
- * Version:         1.3.0
+ * Version:         1.4.0
  *
  * @package         ACF_Field_Group_Values
  */
