@@ -22,21 +22,28 @@ if ( ! class_exists( 'TimJensen\ACF\Field_Group_Values' ) ) :
 		 *
 		 * @var array
 		 */
-		private $config;
+		protected $master_config;
+
+		/**
+		 * Field group configuration array for the current level of recursion.
+		 *
+		 * @var array
+		 */
+		protected $config;
 
 		/**
 		 * Post ID or 'option'.
 		 *
 		 * @var int|string
 		 */
-		private $post_id;
+		protected $post_id;
 
 		/**
 		 * Stores all the custom field values.
 		 *
 		 * @var array
 		 */
-		private $results = [];
+		protected $results = [];
 
 		/**
 		 * Field_Group_Values constructor.
@@ -45,8 +52,9 @@ if ( ! class_exists( 'TimJensen\ACF\Field_Group_Values' ) ) :
 		 * @param array $config  Field group configuration array.
 		 */
 		public function __construct( $post_id, array $config ) {
-			$this->post_id = $post_id;
-			$this->config  = $config;
+			$this->post_id       = $post_id;
+			$this->master_config = $config;
+			$this->config        = $this->master_config;
 		}
 
 		/**
@@ -75,6 +83,10 @@ if ( ! class_exists( 'TimJensen\ACF\Field_Group_Values' ) ) :
 
 					$this->get_flexible_content_field_values( $field, $field_key, $field_value );
 
+				} elseif ( $this->is_clone_field( $field ) ) {
+
+					$this->get_clone_field_values( $field );
+
 				} elseif ( $this->is_repeater_field( $field ) ) {
 
 					if ( empty( $field_value ) ) {
@@ -98,7 +110,7 @@ if ( ! class_exists( 'TimJensen\ACF\Field_Group_Values' ) ) :
 		 *
 		 * @return void
 		 */
-		private function reset_results() {
+		protected function reset_results() {
 			$this->results = [];
 		}
 
@@ -108,7 +120,7 @@ if ( ! class_exists( 'TimJensen\ACF\Field_Group_Values' ) ) :
 		 * @param array $field ACF field configuration.
 		 * @return bool
 		 */
-		private function has_valid_field_structure( array $field ) {
+		protected function has_valid_field_structure( array $field ) {
 			return ! empty( $field['name'] );
 		}
 
@@ -118,7 +130,7 @@ if ( ! class_exists( 'TimJensen\ACF\Field_Group_Values' ) ) :
 		 * @param array $field ACF field configuration.
 		 * @return string
 		 */
-		private function get_field_key( array $field ) {
+		protected function get_field_key( array $field ) {
 			$field_key = $field['name'];
 
 			if ( isset( $field['field_key_prefix'] ) ) {
@@ -134,7 +146,7 @@ if ( ! class_exists( 'TimJensen\ACF\Field_Group_Values' ) ) :
 		 * @param string $field_key Custom field key.
 		 * @return mixed
 		 */
-		private function get_field_value( string $field_key ) {
+		protected function get_field_value( string $field_key ) {
 			if ( 'option' === $this->post_id ) {
 				return get_option( "options_{$field_key}" );
 			}
@@ -148,8 +160,18 @@ if ( ! class_exists( 'TimJensen\ACF\Field_Group_Values' ) ) :
 		 * @param array $field ACF field configuration.
 		 * @return bool
 		 */
-		private function is_flexible_content_field( array $field ) {
+		protected function is_flexible_content_field( array $field ) {
 			return isset( $field['layouts'] );
+		}
+
+		/**
+		 * Determines whether the specified field is of the clone type.
+		 *
+		 * @param array $field ACF field configuration.
+		 * @return bool
+		 */
+		protected function is_clone_field( array $field ) {
+			return isset( $field['type'] ) && 'clone' === $field['type'];
 		}
 
 		/**
@@ -158,7 +180,7 @@ if ( ! class_exists( 'TimJensen\ACF\Field_Group_Values' ) ) :
 		 * @param array $field ACF field configuration.
 		 * @return bool
 		 */
-		private function is_repeater_field( array $field ) {
+		protected function is_repeater_field( array $field ) {
 			return isset( $field['sub_fields'] );
 		}
 
@@ -168,7 +190,7 @@ if ( ! class_exists( 'TimJensen\ACF\Field_Group_Values' ) ) :
 		 * @param array $field ACF field configuration.
 		 * @return array
 		 */
-		private function get_flexible_content_layout_types( array $field ) {
+		protected function get_flexible_content_layout_types( array $field ) {
 
 			$layout_types = [];
 			foreach ( $field['layouts'] as $layout ) {
@@ -186,7 +208,7 @@ if ( ! class_exists( 'TimJensen\ACF\Field_Group_Values' ) ) :
 		 * @param array  $field_value Array of layout types for each flexible content row.
 		 * @return void
 		 */
-		private function get_flexible_content_field_values( array $field, string $field_key, array $field_value ) {
+		protected function get_flexible_content_field_values( array $field, string $field_key, array $field_value ) {
 
 			/** @TODO find a way to write to the results property without destroying the formatting. * */
 			$results = $this->results;
@@ -217,6 +239,73 @@ if ( ! class_exists( 'TimJensen\ACF\Field_Group_Values' ) ) :
 		}
 
 		/**
+		 * Returns the custom field values for clone fields.
+		 *
+		 * @since 1.4.0
+		 *
+		 * @param array $field ACF field configuration.
+		 * @return void
+		 */
+		protected function get_clone_field_values( array $field ) {
+
+			/** @TODO find a way to write to the results property without destroying the formatting. * */
+			$results = $this->results;
+
+			$fields_to_clone = [];
+			foreach ( $field['clone'] as $clone_field_key ) {
+				$fields_to_clone[] = $this->get_clone_field_config( $clone_field_key, $this->master_config );
+			}
+
+			$this->config = $fields_to_clone;
+
+			foreach ( $this->config as &$field_config ) {
+				$field_config['field_key_prefix'] = $field['field_key_prefix'];
+			}
+
+			$results[ $field['name'] ][] = $this->get_all_field_group_values();
+
+			$this->results = $results;
+		}
+
+		/**
+		 * Recursively search the master configuration array for the
+		 * field configuration that should be cloned.
+		 *
+		 * @since 1.4.0
+		 *
+		 * @param string $clone_field_key Field key to search for.
+		 * @param array  $fields_config   ACF fields configuration.
+		 * @return bool|array
+		 */
+		protected function get_clone_field_config( string $clone_field_key, array $fields_config ) {
+
+			foreach ( $fields_config as $field ) {
+
+				if ( $field['key'] === $clone_field_key ) {
+
+					return $field;
+
+				} elseif ( isset( $field['sub_fields'] ) ) {
+
+					$result = $this->get_clone_field_config( $clone_field_key, $field['sub_fields'] );
+
+					if ( $result ) {
+						return $result;
+					}
+				} elseif ( isset( $field['layouts'] ) ) {
+
+					$result = $this->get_clone_field_config( $clone_field_key, $field['layouts'] );
+
+					if ( $result ) {
+						return $result;
+					}
+				}
+			}
+
+			return false;
+		}
+
+		/**
 		 * Returns the custom field values for repeater fields.
 		 *
 		 * @param array  $field       ACF field configuration.
@@ -224,7 +313,7 @@ if ( ! class_exists( 'TimJensen\ACF\Field_Group_Values' ) ) :
 		 * @param string $field_value Field value.
 		 * @return void
 		 */
-		private function get_repeater_field_values( array $field, string $field_key, string $field_value ) {
+		protected function get_repeater_field_values( array $field, string $field_key, string $field_value ) {
 
 			/** @TODO find a way to write to the results property without destroying the formatting. * */
 			$results = $this->results;
@@ -253,7 +342,7 @@ if ( ! class_exists( 'TimJensen\ACF\Field_Group_Values' ) ) :
 		 * @param string $field_value Field value.
 		 * @return void
 		 */
-		private function store_field_value( array $field, string $field_value ) {
+		protected function store_field_value( array $field, string $field_value ) {
 			$this->results[ $field['name'] ] = $field_value;
 		}
 
