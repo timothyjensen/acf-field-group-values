@@ -50,8 +50,8 @@ if ( ! class_exists( 'TimJensen\ACF\Field_Group_Values' ) ) :
 		/**
 		 * Field_Group_Values constructor.
 		 *
-		 * @param mixed $post_id Post ID, or 'options' when retrieving option values.
-		 * @param array $config  Field group configuration array.
+		 * @param int|string $post_id Post ID, or 'options' when retrieving option values.
+		 * @param array      $config  Field group configuration array.
 		 */
 		public function __construct( $post_id, array $config ) {
 			$this->post_id       = $post_id;
@@ -279,7 +279,9 @@ if ( ! class_exists( 'TimJensen\ACF\Field_Group_Values' ) ) :
 			$this->config = $fields_to_clone;
 
 			foreach ( $this->config as &$field_config ) {
+				// Build the field key prefix including ACF's option for prefixing, if set.
 				$prefix = empty( $field['field_key_prefix'] ) ? '' : $field['field_key_prefix'];
+				$prefix = empty( $field['prefix_name'] ) ? $prefix : "{$field['name']}_{$prefix}";
 
 				$field_config['field_key_prefix'] = $prefix;
 			}
