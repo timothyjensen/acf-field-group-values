@@ -20,6 +20,8 @@ if ( ! class_exists( 'TimJensen\ACF\Field_Group_Values' ) ) :
 		/**
 		 * Field group configuration array.
 		 *
+		 * @since 1.4.0
+		 *
 		 * @var array
 		 */
 		protected $master_config;
@@ -228,7 +230,7 @@ if ( ! class_exists( 'TimJensen\ACF\Field_Group_Values' ) ) :
 		 */
 		protected function get_flexible_content_field_values( array $field, string $field_key, array $field_value ) {
 
-			/** @TODO find a way to write to the results property without destroying the formatting. **/
+			/** @TODO find a way to write to the results property without destroying the formatting. * */
 			$results = $this->results;
 
 			$layout_types = $this->get_flexible_content_layout_types( $field );
@@ -266,7 +268,7 @@ if ( ! class_exists( 'TimJensen\ACF\Field_Group_Values' ) ) :
 		 */
 		protected function get_clone_field_values( array $field ) {
 
-			/** @TODO find a way to write to the results property without destroying the formatting. **/
+			/** @TODO find a way to write to the results property without destroying the formatting. * */
 			$results = $this->results;
 
 			$fields_to_clone = [];
@@ -277,7 +279,9 @@ if ( ! class_exists( 'TimJensen\ACF\Field_Group_Values' ) ) :
 			$this->config = $fields_to_clone;
 
 			foreach ( $this->config as &$field_config ) {
-				$field_config['field_key_prefix'] = $field['field_key_prefix'];
+				$prefix = empty( $field['field_key_prefix'] ) ? '' : $field['field_key_prefix'];
+
+				$field_config['field_key_prefix'] = $prefix;
 			}
 
 			$results[ $field['name'] ][] = $this->get_all_field_group_values();
@@ -335,7 +339,7 @@ if ( ! class_exists( 'TimJensen\ACF\Field_Group_Values' ) ) :
 		 */
 		protected function get_group_field_values( array $field, string $field_key, string $field_value ) {
 
-			/** @TODO find a way to write to the results property without destroying the formatting. **/
+			/** @TODO find a way to write to the results property without destroying the formatting. * */
 			$results = $this->results;
 
 			$this->config = $field['sub_fields'];
@@ -359,7 +363,7 @@ if ( ! class_exists( 'TimJensen\ACF\Field_Group_Values' ) ) :
 		 */
 		protected function get_repeater_field_values( array $field, string $field_key, string $field_value ) {
 
-			/** @TODO find a way to write to the results property without destroying the formatting. **/
+			/** @TODO find a way to write to the results property without destroying the formatting. * */
 			$results = $this->results;
 
 			for ( $i = 0; $i < $field_value; $i ++ ) {
