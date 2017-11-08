@@ -87,6 +87,10 @@ if ( ! class_exists( 'TimJensen\ACF\Field_Group_Values' ) ) :
 
 					$this->get_clone_field_values( $field );
 
+				} elseif ( $this->is_group_field( $field ) ) {
+
+					$this->get_group_field_values( $field, $field_key, $field_value );
+
 				} elseif ( $this->is_repeater_field( $field ) ) {
 
 					if ( empty( $field_value ) ) {
@@ -167,11 +171,25 @@ if ( ! class_exists( 'TimJensen\ACF\Field_Group_Values' ) ) :
 		/**
 		 * Determines whether the specified field is of the clone type.
 		 *
+		 * @since 1.4.0
+		 *
 		 * @param array $field ACF field configuration.
 		 * @return bool
 		 */
 		protected function is_clone_field( array $field ) {
 			return isset( $field['type'] ) && 'clone' === $field['type'];
+		}
+
+		/**
+		 * Determines whether the specified field is of the group type.
+		 *
+		 * @since 1.4.0
+		 *
+		 * @param array $field ACF field configuration.
+		 * @return bool
+		 */
+		protected function is_group_field( array $field ) {
+			return isset( $field['type'] ) && 'group' === $field['type'];
 		}
 
 		/**
@@ -210,7 +228,7 @@ if ( ! class_exists( 'TimJensen\ACF\Field_Group_Values' ) ) :
 		 */
 		protected function get_flexible_content_field_values( array $field, string $field_key, array $field_value ) {
 
-			/** @TODO find a way to write to the results property without destroying the formatting. * */
+			/** @TODO find a way to write to the results property without destroying the formatting. **/
 			$results = $this->results;
 
 			$layout_types = $this->get_flexible_content_layout_types( $field );
@@ -248,7 +266,7 @@ if ( ! class_exists( 'TimJensen\ACF\Field_Group_Values' ) ) :
 		 */
 		protected function get_clone_field_values( array $field ) {
 
-			/** @TODO find a way to write to the results property without destroying the formatting. * */
+			/** @TODO find a way to write to the results property without destroying the formatting. **/
 			$results = $this->results;
 
 			$fields_to_clone = [];
@@ -306,6 +324,32 @@ if ( ! class_exists( 'TimJensen\ACF\Field_Group_Values' ) ) :
 		}
 
 		/**
+		 * Returns the custom field values for group fields.
+		 *
+		 * @since 1.4.0
+		 *
+		 * @param array  $field       ACF field configuration.
+		 * @param string $field_key   Field key.
+		 * @param string $field_value Field value.
+		 * @return void
+		 */
+		protected function get_group_field_values( array $field, string $field_key, string $field_value ) {
+
+			/** @TODO find a way to write to the results property without destroying the formatting. **/
+			$results = $this->results;
+
+			$this->config = $field['sub_fields'];
+
+			foreach ( $this->config as &$field_config ) {
+				$field_config['field_key_prefix'] = $field_key . '_';
+			}
+
+			$results[ $field['name'] ][] = $this->get_all_field_group_values();
+
+			$this->results = $results;
+		}
+
+		/**
 		 * Returns the custom field values for repeater fields.
 		 *
 		 * @param array  $field       ACF field configuration.
@@ -315,7 +359,7 @@ if ( ! class_exists( 'TimJensen\ACF\Field_Group_Values' ) ) :
 		 */
 		protected function get_repeater_field_values( array $field, string $field_key, string $field_value ) {
 
-			/** @TODO find a way to write to the results property without destroying the formatting. * */
+			/** @TODO find a way to write to the results property without destroying the formatting. **/
 			$results = $this->results;
 
 			for ( $i = 0; $i < $field_value; $i ++ ) {
