@@ -11,7 +11,7 @@ Alternatively, you can download the latest release and install it like a typical
 
 ## Usage
 
-Convert the ACF field group JSON to an array that will be passed to the helper function `get_all_custom_field_meta()`:
+[Configure ACF](https://www.advancedcustomfields.com/resources/local-json/) to save field group JSON files within your theme or plugin. Next, convert the ACF field group JSON to an array that will be passed to the helper function `get_all_custom_field_meta()`:
 ```php
 <?php
 
