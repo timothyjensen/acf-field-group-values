@@ -286,7 +286,7 @@ if ( ! class_exists( 'TimJensen\ACF\Field_Group_Values' ) ) :
 				$field_config['field_key_prefix'] = $prefix;
 			}
 
-			$results[ $field['name'] ][] = $this->get_all_field_group_values();
+			$results[ $field['name'] ] = $this->get_all_field_group_values();
 
 			$this->results = $results;
 		}
@@ -350,7 +350,7 @@ if ( ! class_exists( 'TimJensen\ACF\Field_Group_Values' ) ) :
 				$field_config['field_key_prefix'] = $field_key . '_';
 			}
 
-			$results[ $field['name'] ][] = $this->get_all_field_group_values();
+			$results[ $field['name'] ] = $this->get_all_field_group_values();
 
 			$this->results = $results;
 		}

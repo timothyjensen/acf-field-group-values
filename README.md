@@ -45,15 +45,11 @@ $acf_option_values = get_all_custom_field_meta( 'option', $config );
 
 $results = [
 	'group'            => [
-		[
-			'group_1'  => 'Group 1',
-			'group_2'  => 'Group 2',
-			'subgroup' => [
-				[
-					'subgroup1' => 'Subgroup 1',
-					'subgroup2' => 'Subgroup 2',
-				],
-			],
+		'group_1'  => 'Group 1',
+		'group_2'  => 'Group 2',
+		'subgroup' => [
+			'subgroup1' => 'Subgroup 1',
+			'subgroup2' => 'Subgroup 2',
 		],
 	],
 	'repeater'         => [
@@ -80,14 +76,10 @@ $results = [
 		],
 	],
 	'clone'            => [
-		[
-			'group_1'  => 'Cloned group 1',
-			'subgroup' => [
-				[
-					'subgroup1' => 'Cloned subgroup 1',
-					'subgroup2' => 'Cloned subgroup 2',
-				],
-			],
+		'group_1'  => 'Cloned group 1',
+		'subgroup' => [
+			'subgroup1' => 'Cloned subgroup 1',
+			'subgroup2' => 'Cloned subgroup 2',
 		],
 	],
 ];
