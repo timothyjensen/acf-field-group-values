@@ -271,14 +271,21 @@ if ( ! class_exists( 'TimJensen\ACF\Field_Group_Values' ) ) :
 
 			$results = $this->results;
 
-			$fields_to_clone = [];
+			$this->config = [];
 			foreach ( $field['clone'] as $clone_field_key ) {
-				$fields_to_clone[] = $this->get_clone_field_config( $clone_field_key, $this->master_config );
+
+				$clone_field_config = $this->get_clone_field_config( $clone_field_key, $this->master_config );
+
+				// A `false` value means the corresponding field was deleted from the field group.
+				if ( false === $clone_field_config ) {
+					continue;
+				}
+
+				$this->config[] = $clone_field_config;
 			}
 
-			$this->config = $fields_to_clone;
-
 			foreach ( $this->config as &$field_config ) {
+
 				// Build the field key prefix including ACF's option for prefixing, if set.
 				$prefix = empty( $field['field_key_prefix'] ) ? '' : $field['field_key_prefix'];
 				$prefix = empty( $field['prefix_name'] ) ? $prefix : "{$field['name']}_{$prefix}";
