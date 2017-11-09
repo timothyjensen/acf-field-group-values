@@ -389,11 +389,11 @@ if ( ! class_exists( 'TimJensen\ACF\Field_Group_Values' ) ) :
 		/**
 		 * Store the field value to the results property.
 		 *
-		 * @param array  $field       ACF field configuration.
-		 * @param string $field_value Field value.
+		 * @param array        $field       ACF field configuration.
+		 * @param string|array $field_value Field value.
 		 * @return void
 		 */
-		protected function store_field_value( array $field, string $field_value ) {
+		protected function store_field_value( array $field, $field_value ) {
 			$this->results[ $field['name'] ] = $field_value;
 		}
 
