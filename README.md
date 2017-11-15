@@ -14,32 +14,43 @@ Alternatively, you can download the latest release and install it like a typical
 
 ## Usage
 
-[Configure ACF](https://www.advancedcustomfields.com/resources/local-json/) to save field group JSON files within your theme or plugin. Next, convert the ACF field group JSON to an array that will be passed to the helper function `get_all_custom_field_meta()`:
+As of version 2.0.0 the `$config` argument must include the field group key in addition to the array of fields; you now pass in `$config` instead of `$config['fields']`. This is a breaking change.
+
+- [Configure ACF](https://www.advancedcustomfields.com/resources/local-json/) to save field group JSON files within your theme or plugin. Next, convert the ACF field group JSON to an array that will be passed to the helper function `get_all_custom_field_meta()`:
 ```php
 <?php
 
 // Replace with the name of your field group JSON.
 $field_group_json = 'group_59e226a200966.json';
 
-$field_group_array = json_decode( file_get_contents( PATH_TO_ACF_JSON . $field_group_json ), true );
-
-$config = $field_group_array['fields'];
+$config = json_decode( file_get_contents( PATH_TO_ACF_JSON . $field_group_json ), true );
 ```
-
-Build an array containing all post meta for the specified field group:
+- Build an array containing all post meta for the specified field group:
 ```php
 <?php
 
-$post_id = get_the_ID();
-
-$acf_post_meta = get_all_custom_field_meta( $post_id, $config );
+$acf_post_meta = get_all_custom_field_meta( get_the_ID(), $config );
 ```
 
-Build an array containing all option values for the specified field group:
+- Build an array containing all option values for the specified field group:
 ```php
 <?php
 
 $acf_option_values = get_all_custom_field_meta( 'option', $config );
+```
+
+- In order to retrieve values for clone fields you must pass a third argument containing field group arrays for all those clone fields:
+```php
+<?php
+
+// Replace with the names of your field group JSONs.
+$clone_json_1 = 'group_59e226a200967.json';
+$clone_json_2 = 'group_59e226a200968.json';
+
+$clone_field_group_1 = json_decode( file_get_contents( PATH_TO_ACF_JSON . $clone_json_1 ), true );
+$clone_field_group_2 = json_decode( file_get_contents( PATH_TO_ACF_JSON . $clone_json_2 ), true );
+
+$acf_post_meta = get_all_custom_field_meta( get_the_ID(), $config, [ $clone_field_group_1, $clone_field_group_2 ] );
 ```
 
 ## Example Results

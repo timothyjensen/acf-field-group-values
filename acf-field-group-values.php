@@ -7,7 +7,7 @@
  * Author URI:      https://www.timjensen.us
  * Text Domain:     acf-field-group-values
  * Domain Path:     /languages
- * Version:         1.4.1
+ * Version:         2.0.0
  *
  * @package         ACF_Field_Group_Values
  */
@@ -25,12 +25,13 @@ if ( ! function_exists( 'get_all_custom_field_meta' ) ) :
 	 *
 	 * @link    https://www.timjensen.us/acf-get-field-alternative/
 	 *
-	 * @param int|string $post_id Required. Post ID, or 'options' when retrieving option values.
-	 * @param array      $config  Required. ACF field group JSON reformatted as an array.
+	 * @param int|string $post_id      Required. Post ID, or 'options' when retrieving option values.
+	 * @param array      $config       Required. ACF field group JSON reformatted as an array.
+	 * @param array      $clone_fields Optional. ACF field group JSON arrays for all cloned fields/groups.
 	 * @return array
 	 */
-	function get_all_custom_field_meta( $post_id, array $config ) {
-		$field_group_values = new \TimJensen\ACF\Field_Group_Values( $post_id, $config );
+	function get_all_custom_field_meta( $post_id, array $config, array $clone_fields = [] ) {
+		$field_group_values = new \TimJensen\ACF\Field_Group_Values( $post_id, $config, $clone_fields );
 
 		return $field_group_values->get_all_field_group_values();
 	}

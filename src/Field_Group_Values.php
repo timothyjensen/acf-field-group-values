@@ -18,20 +18,20 @@ if ( ! class_exists( 'TimJensen\ACF\Field_Group_Values' ) ) :
 	class Field_Group_Values {
 
 		/**
-		 * Field group configuration array.
-		 *
-		 * @since 1.4.0
-		 *
-		 * @var array
-		 */
-		protected $master_config;
-
-		/**
 		 * Field group configuration array for the current level of recursion.
 		 *
 		 * @var array
 		 */
 		protected $config;
+
+		/**
+		 * Field group configuration array containing fields/groups to clone.
+		 *
+		 * @since 2.0.0
+		 *
+		 * @var array
+		 */
+		protected $clone_fields;
 
 		/**
 		 * Post ID or 'option'.
@@ -50,13 +50,20 @@ if ( ! class_exists( 'TimJensen\ACF\Field_Group_Values' ) ) :
 		/**
 		 * Field_Group_Values constructor.
 		 *
-		 * @param int|string $post_id Post ID, or 'options' when retrieving option values.
-		 * @param array      $config  Field group configuration array.
+		 * @param int|string $post_id      Post ID, or 'options' when retrieving option values.
+		 * @param array      $config       Field group configuration array.
+		 * @param array      $clone_fields Field group configuration arrays for cloned fields/groups.
+		 * @throws \Exception
 		 */
-		public function __construct( $post_id, array $config ) {
-			$this->post_id       = $post_id;
-			$this->master_config = $config;
-			$this->config        = $this->master_config;
+		public function __construct( $post_id, array $config, $clone_fields = [] ) {
+
+			if ( empty( $config['fields'] ) ) {
+				throw new \Exception( 'As of version 2.0.0 the $config argument must include the field group key in addition to the array of fields. Pass $config instead of $config[\'fields\'].' );
+			}
+
+			$this->post_id      = $post_id;
+			$this->config       = $config['fields'];
+			$this->clone_fields = array_merge( [ $config ], $clone_fields );
 		}
 
 		/**
@@ -167,7 +174,7 @@ if ( ! class_exists( 'TimJensen\ACF\Field_Group_Values' ) ) :
 		 * @return bool
 		 */
 		protected function is_flexible_content_field( array $field ) {
-			return isset( $field['layouts'] );
+			return isset( $field['type'] ) && 'flexible_content' === $field['type'];
 		}
 
 		/**
@@ -201,7 +208,7 @@ if ( ! class_exists( 'TimJensen\ACF\Field_Group_Values' ) ) :
 		 * @return bool
 		 */
 		protected function is_repeater_field( array $field ) {
-			return isset( $field['sub_fields'] );
+			return isset( $field['type'] ) && 'repeater' === $field['type'];
 		}
 
 		/**
@@ -274,14 +281,14 @@ if ( ! class_exists( 'TimJensen\ACF\Field_Group_Values' ) ) :
 			$this->config = [];
 			foreach ( $field['clone'] as $clone_field_key ) {
 
-				$clone_field_config = $this->get_clone_field_config( $clone_field_key, $this->master_config );
+				$clone_field_config = $this->get_clone_field_config( $clone_field_key, $this->clone_fields );
 
 				// A `false` value means the corresponding field was deleted from the field group.
 				if ( false === $clone_field_config ) {
 					continue;
 				}
 
-				$this->config[] = $clone_field_config;
+				$this->config = array_merge( $this->config, $clone_field_config );
 			}
 
 			foreach ( $this->config as &$field_config ) {
@@ -299,23 +306,34 @@ if ( ! class_exists( 'TimJensen\ACF\Field_Group_Values' ) ) :
 		}
 
 		/**
-		 * Recursively search the master configuration array for the
-		 * field configuration that should be cloned.
+		 * Recursively search for the appropriate clone configuration array.
 		 *
 		 * @since 1.4.0
 		 *
 		 * @param string $clone_field_key Field key to search for.
-		 * @param array  $fields_config   ACF fields configuration.
+		 * @param array  $clone_fields    ACF fields configuration.
 		 * @return bool|array
 		 */
-		protected function get_clone_field_config( string $clone_field_key, array $fields_config ) {
+		protected function get_clone_field_config( string $clone_field_key, array $clone_fields ) {
 
-			foreach ( $fields_config as $field ) {
+			foreach ( $clone_fields as $field ) {
 
 				if ( $field['key'] === $clone_field_key ) {
 
-					return $field;
+					// Field group
+					if ( isset( $field['fields'] ) ) {
+						return $field['fields'];
+					}
 
+					return [ $field ];
+
+				} elseif ( isset( $field['fields'] ) ) { // Field Group.
+
+					$result = $this->get_clone_field_config( $clone_field_key, $field['fields'] );
+
+					if ( $result ) {
+						return $result;
+					}
 				} elseif ( isset( $field['sub_fields'] ) ) {
 
 					$result = $this->get_clone_field_config( $clone_field_key, $field['sub_fields'] );
