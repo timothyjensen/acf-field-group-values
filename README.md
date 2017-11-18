@@ -49,7 +49,7 @@ $clone_json_2 = 'group_59e226a200968.json';
 
 $clone_fields = [
 	json_decode( file_get_contents( PATH_TO_ACF_JSON . $clone_json_1 ), true ),
-    json_decode( file_get_contents( PATH_TO_ACF_JSON . $clone_json_2 ), true )
+	json_decode( file_get_contents( PATH_TO_ACF_JSON . $clone_json_2 ), true )
 ];
 
 $acf_post_meta = get_all_custom_field_meta( get_the_ID(), $config, $clone_fields );
