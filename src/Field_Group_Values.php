@@ -6,7 +6,10 @@
  * @license     GNU General Public License 2.0+
  * @link        https://www.timjensen.us
  * @since       1.3.0
+ * @package     TimJensen\ACF\Field_Group_Values
  */
+
+declare( strict_types = 1 );
 
 namespace TimJensen\ACF;
 
@@ -53,14 +56,8 @@ if ( ! class_exists( 'TimJensen\ACF\Field_Group_Values' ) ) :
 		 * @param int|string $post_id      Post ID, or 'options' when retrieving option values.
 		 * @param array      $config       Field group configuration array.
 		 * @param array      $clone_fields Field group configuration arrays for cloned fields/groups.
-		 * @throws \Exception
 		 */
 		public function __construct( $post_id, array $config, $clone_fields = [] ) {
-
-			if ( empty( $config['fields'] ) ) {
-				throw new \Exception( 'As of version 2.0.0 the $config argument must include the field group key in addition to the array of fields. Pass $config instead of $config[\'fields\'].' );
-			}
-
 			$this->post_id      = $post_id;
 			$this->config       = $config['fields'];
 			$this->clone_fields = array_merge( [ $config ], $clone_fields );
@@ -71,7 +68,7 @@ if ( ! class_exists( 'TimJensen\ACF\Field_Group_Values' ) ) :
 		 *
 		 * @return array
 		 */
-		public function get_all_field_group_values() {
+		public function get_all_field_group_values(): array {
 
 			$this->reset_results();
 
@@ -133,7 +130,7 @@ if ( ! class_exists( 'TimJensen\ACF\Field_Group_Values' ) ) :
 		 * @param array $field ACF field configuration.
 		 * @return bool
 		 */
-		protected function has_valid_field_structure( array $field ) {
+		protected function has_valid_field_structure( array $field ): bool {
 			return ! empty( $field['name'] );
 		}
 
@@ -143,7 +140,7 @@ if ( ! class_exists( 'TimJensen\ACF\Field_Group_Values' ) ) :
 		 * @param array $field ACF field configuration.
 		 * @return string
 		 */
-		protected function get_field_key( array $field ) {
+		protected function get_field_key( array $field ): string {
 			$field_key = $field['name'];
 
 			if ( isset( $field['field_key_prefix'] ) ) {
@@ -168,47 +165,59 @@ if ( ! class_exists( 'TimJensen\ACF\Field_Group_Values' ) ) :
 		}
 
 		/**
-		 * Determines whether the specified field is of the flexible content type.
+		 * Returns true if $field represents a flexible content field.
 		 *
 		 * @param array $field ACF field configuration.
 		 * @return bool
 		 */
-		protected function is_flexible_content_field( array $field ) {
+		protected function is_flexible_content_field( array $field ): bool {
 			return isset( $field['type'] ) && 'flexible_content' === $field['type'];
 		}
 
 		/**
-		 * Determines whether the specified field is of the clone type.
+		 * Returns true if $field represents a clone field.
 		 *
 		 * @since 1.4.0
 		 *
 		 * @param array $field ACF field configuration.
 		 * @return bool
 		 */
-		protected function is_clone_field( array $field ) {
+		protected function is_clone_field( array $field ): bool {
 			return isset( $field['type'] ) && 'clone' === $field['type'];
 		}
 
 		/**
-		 * Determines whether the specified field is of the group type.
+		 * Returns true if $field represents a group field.
 		 *
 		 * @since 1.4.0
 		 *
 		 * @param array $field ACF field configuration.
 		 * @return bool
 		 */
-		protected function is_group_field( array $field ) {
+		protected function is_group_field( array $field ): bool {
 			return isset( $field['type'] ) && 'group' === $field['type'];
 		}
 
 		/**
-		 * Determines whether the specified field is of the repeater type.
+		 * Returns true if $field represents a repeater field.
 		 *
 		 * @param array $field ACF field configuration.
 		 * @return bool
 		 */
-		protected function is_repeater_field( array $field ) {
+		protected function is_repeater_field( array $field ): bool {
 			return isset( $field['type'] ) && 'repeater' === $field['type'];
+		}
+
+		/**
+		 * Returns true if $field represents a field group.
+		 *
+		 * @since 2.0.0
+		 *
+		 * @param array $field ACF field configuration.
+		 * @return bool
+		 */
+		protected function is_field_group( array $field ): bool {
+			return isset( $field['fields'] );
 		}
 
 		/**
@@ -217,7 +226,7 @@ if ( ! class_exists( 'TimJensen\ACF\Field_Group_Values' ) ) :
 		 * @param array $field ACF field configuration.
 		 * @return array
 		 */
-		protected function get_flexible_content_layout_types( array $field ) {
+		protected function get_flexible_content_layout_types( array $field ): array {
 
 			$layout_types = [];
 			foreach ( $field['layouts'] as $layout ) {
@@ -237,7 +246,6 @@ if ( ! class_exists( 'TimJensen\ACF\Field_Group_Values' ) ) :
 		 */
 		protected function get_flexible_content_field_values( array $field, string $field_key, array $field_value ) {
 
-			/** @TODO find a way to write to the results property without destroying the formatting. * */
 			$results = $this->results;
 
 			$layout_types = $this->get_flexible_content_layout_types( $field );
@@ -320,28 +328,27 @@ if ( ! class_exists( 'TimJensen\ACF\Field_Group_Values' ) ) :
 
 				if ( $field['key'] === $clone_field_key ) {
 
-					// Field group
-					if ( isset( $field['fields'] ) ) {
+					if ( $this->is_field_group( $field ) ) {
 						return $field['fields'];
 					}
 
 					return [ $field ];
 
-				} elseif ( isset( $field['fields'] ) ) { // Field Group.
+				} elseif ( $this->is_field_group( $field ) ) {
 
 					$result = $this->get_clone_field_config( $clone_field_key, $field['fields'] );
 
 					if ( $result ) {
 						return $result;
 					}
-				} elseif ( isset( $field['sub_fields'] ) ) {
+				} elseif ( $this->is_group_field( $field ) ) {
 
 					$result = $this->get_clone_field_config( $clone_field_key, $field['sub_fields'] );
 
 					if ( $result ) {
 						return $result;
 					}
-				} elseif ( isset( $field['layouts'] ) ) {
+				} elseif ( $this->is_flexible_content_field( $field ) ) {
 
 					$result = $this->get_clone_field_config( $clone_field_key, $field['layouts'] );
 
@@ -420,7 +427,7 @@ if ( ! class_exists( 'TimJensen\ACF\Field_Group_Values' ) ) :
 		 *
 		 * @return array
 		 */
-		public function get_results() {
+		public function get_results(): array {
 			return $this->results;
 		}
 	}

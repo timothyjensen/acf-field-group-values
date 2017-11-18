@@ -9,8 +9,10 @@
  * Domain Path:     /languages
  * Version:         2.0.0
  *
- * @package         ACF_Field_Group_Values
+ * @package         TimJensen\ACF\Field_Group_Values
  */
+
+declare( strict_types = 1 );
 
 if ( ! defined( 'ABSPATH' ) ) {
 	die;
@@ -30,7 +32,13 @@ if ( ! function_exists( 'get_all_custom_field_meta' ) ) :
 	 * @param array      $clone_fields Optional. ACF field group JSON arrays for all cloned fields/groups.
 	 * @return array
 	 */
-	function get_all_custom_field_meta( $post_id, array $config, array $clone_fields = [] ) {
+	function get_all_custom_field_meta( $post_id, array $config, array $clone_fields = [] ): array {
+		if ( empty( $config['fields'] ) ) {
+			trigger_error( 'As of version 2.0.0 the $config argument should include the field group key in addition to the array of fields. Pass $config instead of $config[\'fields\'].', E_USER_WARNING );
+			$corrected_config['fields'] = $config;
+			$config                     = $corrected_config;
+		}
+
 		$field_group_values = new \TimJensen\ACF\Field_Group_Values( $post_id, $config, $clone_fields );
 
 		return $field_group_values->get_all_field_group_values();
