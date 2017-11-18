@@ -43,6 +43,16 @@ As of version 2.0.0 the `$config` argument must contain all data from the acf fi
     
     $acf_option_values = get_all_custom_field_meta( 'option', $config );
     ```
+    
+1. Build an array containing all term meta for the specified field group:
+
+    ```php
+    <?php
+    
+    $term_id = 'term_2';
+    
+    $acf_term_values = get_all_custom_field_meta( $term_id, $config );
+    ```
 
 1. In order to retrieve values for clone fields you must pass a third argument: all field group arrays that contain the fields that will be cloned.
 

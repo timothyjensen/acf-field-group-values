@@ -53,7 +53,7 @@ if ( ! class_exists( 'TimJensen\ACF\Field_Group_Values' ) ) :
 		/**
 		 * Field_Group_Values constructor.
 		 *
-		 * @param int|string $post_id      Post ID, or 'options' when retrieving option values.
+		 * @param int|string $post_id      Post ID, 'options', or 'term_{id}'.
 		 * @param array      $config       Field group configuration array.
 		 * @param array      $clone_fields Field group configuration arrays for cloned fields/groups.
 		 */
@@ -159,6 +159,9 @@ if ( ! class_exists( 'TimJensen\ACF\Field_Group_Values' ) ) :
 		protected function get_field_value( string $field_key ) {
 			if ( 'option' === $this->post_id ) {
 				return get_option( "options_{$field_key}" );
+			} elseif ( 'term_' === substr( $this->post_id, 0, 5 ) ) {
+				$term_id = (int) substr( $this->post_id, 5 );
+				return get_term_meta( $term_id, $field_key, true );
 			}
 
 			return get_post_meta( $this->post_id, $field_key, true );
