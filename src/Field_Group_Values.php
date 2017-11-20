@@ -159,7 +159,7 @@ if ( ! class_exists( 'TimJensen\ACF\Field_Group_Values' ) ) :
 		protected function get_field_value( string $field_key ) {
 			if ( 'option' === $this->post_id ) {
 				return get_option( "options_{$field_key}" );
-			} elseif ( 'term_' === substr( $this->post_id, 0, 5 ) ) {
+			} elseif ( is_string( $this->post_id ) && 'term_' === substr( $this->post_id, 0, 5 ) ) {
 				$term_id = (int) substr( $this->post_id, 5 );
 				return get_term_meta( $term_id, $field_key, true );
 			}
