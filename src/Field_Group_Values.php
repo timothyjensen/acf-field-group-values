@@ -339,15 +339,25 @@ if ( ! class_exists( 'TimJensen\ACF\Field_Group_Values' ) ) :
 
 				} elseif ( $this->is_field_group( $field ) ) {
 
-					return $this->get_clone_field_config( $clone_field_key, $field['fields'] );
+					$result = $this->get_clone_field_config( $clone_field_key, $field['fields'] );
 
+					if ( $result ) {
+						return $result;
+					}
 				} elseif ( $this->is_group_field( $field ) ) {
 
-					return $this->get_clone_field_config( $clone_field_key, $field['sub_fields'] );
+					$result = $this->get_clone_field_config( $clone_field_key, $field['sub_fields'] );
 
+					if ( $result ) {
+						return $result;
+					}
 				} elseif ( $this->is_flexible_content_field( $field ) ) {
 
-					return $this->get_clone_field_config( $clone_field_key, $field['layouts'] );
+					$result = $this->get_clone_field_config( $clone_field_key, $field['layouts'] );
+
+					if ( $result ) {
+						return $result;
+					}
 				}
 			}
 
