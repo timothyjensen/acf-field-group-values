@@ -344,7 +344,7 @@ if ( ! class_exists( 'TimJensen\ACF\Field_Group_Values' ) ) :
 					if ( $result ) {
 						return $result;
 					}
-				} elseif ( $this->is_group_field( $field ) ) {
+				} elseif ( $this->is_repeater_field( $field ) || $this->is_group_field( $field ) ) {
 
 					$result = $this->get_clone_field_config( $clone_field_key, $field['sub_fields'] );
 
