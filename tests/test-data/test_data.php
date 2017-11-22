@@ -1,0 +1,21 @@
+<?php
+return [
+	'group'                                => '',
+	'group_text'                           => 'Group text field',
+	'group_nestedgroup'                    => '',
+	'group_nestedgroup_subgroup1'          => 'Nested subgroup 1',
+	'group_nestedgroup_subgroup2'          => 'Nested subgroup 2',
+	'repeater'                             => '1',
+	'repeater_0_subfield'                  => 'Subfield',
+	'repeater_0_nestedrepeater_0_subfield' => 'Nested subfield 1',
+	'repeater_0_nestedrepeater_1_subfield' => 'Nested subfield 2',
+	'repeater_0_nestedrepeater'            => '2',
+	'flexcontent'                          => [ 'layout1', 'layout2' ],
+	'flexcontent_0_textfield'              => 'Layout 1 text field',
+	'flexcontent_1_wysiwyg'                => 'Layout 2 WYSIWYG',
+	'clone'                                => '',
+	'clone-repeater'                       => '2',
+	'clone-repeater_1_subfield'            => 'Cloned repeater 2',
+	'clone-repeater_0_subfield'            => 'Cloned repeater 1',
+	'clone-text'                           => 'Cloned text field',
+];

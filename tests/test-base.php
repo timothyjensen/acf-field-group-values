@@ -39,9 +39,9 @@ class Base extends WP_UnitTestCase {
 	public $meta_key = '';
 
 	public function setUp() {
-		$this->config = json_decode( file_get_contents( __DIR__ . '/acf-json/test_field_group.json' ), true );
+		$this->config = json_decode( file_get_contents( __DIR__ . '/test-data/test_field_group.json' ), true );
 
-		$this->test_meta = include __DIR__ . '/acf-json/test_data.php';
+		$this->test_meta = include __DIR__ . '/test-data/test_data.php';
 	}
 
 	public function test_is_valid_config() {
