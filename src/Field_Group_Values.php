@@ -198,8 +198,7 @@ if ( ! class_exists( 'TimJensen\ACF\Field_Group_Values' ) ) :
 		 * @param array  $field_value     Array of layout types for each flexible content row.
 		 * @return void
 		 */
-		protected function get_flexible_content_field_values( array $field, string $parent_meta_key, array $field_value
-		) {
+		protected function get_flexible_content_field_values( array $field, string $parent_meta_key, array $field_value ) {
 			$results = $this->results;
 
 			$layout_types = $this->get_flexible_content_layout_types( $field );
@@ -236,7 +235,6 @@ if ( ! class_exists( 'TimJensen\ACF\Field_Group_Values' ) ) :
 		 * @return void
 		 */
 		protected function get_clone_field_values( array $field ) {
-
 			$results = $this->results;
 
 			$config = [];
@@ -270,15 +268,11 @@ if ( ! class_exists( 'TimJensen\ACF\Field_Group_Values' ) ) :
 		 * @param int    $index           Loop index.
 		 * @return array
 		 */
-		protected function set_meta_key_prefix(
-			string $field_type, array $config, string $parent_meta_key = '', int $index
-		= 0
-		): array {
+		protected function set_meta_key_prefix( string $field_type, array $config, string $parent_meta_key = '', int $index = 0 ): array {
 			switch ( $field_type ) {
 
 				case 'clone':
 					foreach ( $config as &$field_config ) {
-
 						// Build the field key prefix including ACF's option for prefixing, if set.
 						$prefix = empty( $field['meta_key_prefix'] ) ? '' : $field['meta_key_prefix'];
 						$prefix = empty( $field['prefix_name'] ) ? $prefix : "{$field['name']}_{$prefix}";
