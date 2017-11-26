@@ -82,35 +82,40 @@ if ( ! class_exists( 'TimJensen\ACF\Field_Group_Values' ) ) :
 				$field_key   = $this->get_field_key( $field );
 				$field_value = $this->get_field_value( $field_key );
 
-				if ( $this->is_flexible_content_field( $field ) ) {
+				switch ( $field['type'] ) :
 
-					if ( empty( $field_value ) ) {
-						continue;
-					}
+					case 'group':
+						$this->get_group_field_values( $field, $field_key, $field_value );
 
-					$this->get_flexible_content_field_values( $field, $field_key, $field_value );
+						break;
 
-				} elseif ( $this->is_clone_field( $field ) ) {
+					case 'repeater':
+						if ( empty( $field_value ) ) {
+							break;
+						}
 
-					$this->get_clone_field_values( $field );
+						$this->get_repeater_field_values( $field, $field_key, $field_value );
 
-				} elseif ( $this->is_group_field( $field ) ) {
+						break;
 
-					$this->get_group_field_values( $field, $field_key, $field_value );
+					case 'flexible_content':
+						if ( empty( $field_value ) ) {
+							break;
+						}
 
-				} elseif ( $this->is_repeater_field( $field ) ) {
+						$this->get_flexible_content_field_values( $field, $field_key, $field_value );
 
-					if ( empty( $field_value ) ) {
-						continue;
-					}
+						break;
 
-					$this->get_repeater_field_values( $field, $field_key, $field_value );
+					case 'clone':
+						$this->get_clone_field_values( $field );
 
-				} else {
+						break;
 
-					$this->store_field_value( $field, $field_value );
+					default:
+						$this->store_field_value( $field, $field_value );
 
-				}
+				endswitch;
 			}
 
 			return $this->results;
@@ -170,62 +175,6 @@ if ( ! class_exists( 'TimJensen\ACF\Field_Group_Values' ) ) :
 		}
 
 		/**
-		 * Returns true if $field represents a flexible content field.
-		 *
-		 * @param array $field ACF field configuration.
-		 * @return bool
-		 */
-		protected function is_flexible_content_field( array $field ): bool {
-			return isset( $field['type'] ) && 'flexible_content' === $field['type'];
-		}
-
-		/**
-		 * Returns true if $field represents a clone field.
-		 *
-		 * @since 1.4.0
-		 *
-		 * @param array $field ACF field configuration.
-		 * @return bool
-		 */
-		protected function is_clone_field( array $field ): bool {
-			return isset( $field['type'] ) && 'clone' === $field['type'];
-		}
-
-		/**
-		 * Returns true if $field represents a group field.
-		 *
-		 * @since 1.4.0
-		 *
-		 * @param array $field ACF field configuration.
-		 * @return bool
-		 */
-		protected function is_group_field( array $field ): bool {
-			return isset( $field['type'] ) && 'group' === $field['type'];
-		}
-
-		/**
-		 * Returns true if $field represents a repeater field.
-		 *
-		 * @param array $field ACF field configuration.
-		 * @return bool
-		 */
-		protected function is_repeater_field( array $field ): bool {
-			return isset( $field['type'] ) && 'repeater' === $field['type'];
-		}
-
-		/**
-		 * Returns true if $field represents a field group.
-		 *
-		 * @since 2.0.0
-		 *
-		 * @param array $field ACF field configuration.
-		 * @return bool
-		 */
-		protected function is_field_group( array $field ): bool {
-			return isset( $field['fields'] );
-		}
-
-		/**
 		 * Returns an array of ACF flexible content layout types.
 		 *
 		 * @param array $field ACF field configuration.
@@ -244,9 +193,9 @@ if ( ! class_exists( 'TimJensen\ACF\Field_Group_Values' ) ) :
 		/**
 		 * Returns the values for repeater fields.
 		 *
-		 * @param array  $field       ACF field configuration.
-		 * @param string $parent_meta_key   Field key.
-		 * @param array  $field_value Array of layout types for each flexible content row.
+		 * @param array  $field           ACF field configuration.
+		 * @param string $parent_meta_key Field key.
+		 * @param array  $field_value     Array of layout types for each flexible content row.
 		 * @return void
 		 */
 		protected function get_flexible_content_field_values( array $field, string $parent_meta_key, array $field_value
@@ -321,9 +270,10 @@ if ( ! class_exists( 'TimJensen\ACF\Field_Group_Values' ) ) :
 		 * @param int    $index           Loop index.
 		 * @return array
 		 */
-		protected function set_meta_key_prefix( string $field_type, array $config, string $parent_meta_key = '', int
-		$index
-		= 0 ): array {
+		protected function set_meta_key_prefix(
+			string $field_type, array $config, string $parent_meta_key = '', int $index
+		= 0
+		): array {
 			switch ( $field_type ) {
 
 				case 'clone':
@@ -416,9 +366,9 @@ if ( ! class_exists( 'TimJensen\ACF\Field_Group_Values' ) ) :
 		 *
 		 * @since 1.4.0
 		 *
-		 * @param array  $field       ACF field configuration.
-		 * @param string $parent_meta_key   Field key.
-		 * @param string $field_value Field value.
+		 * @param array  $field           ACF field configuration.
+		 * @param string $parent_meta_key Field key.
+		 * @param string $field_value     Field value.
 		 * @return void
 		 */
 		protected function get_group_field_values( array $field, string $parent_meta_key, string $field_value ) {
@@ -434,9 +384,9 @@ if ( ! class_exists( 'TimJensen\ACF\Field_Group_Values' ) ) :
 		/**
 		 * Returns the custom field values for repeater fields.
 		 *
-		 * @param array  $field       ACF field configuration.
-		 * @param string $parent_meta_key   Field key.
-		 * @param string $field_value Field value.
+		 * @param array  $field           ACF field configuration.
+		 * @param string $parent_meta_key Field key.
+		 * @param string $field_value     Field value.
 		 * @return void
 		 */
 		protected function get_repeater_field_values( array $field, string $parent_meta_key, string $field_value ) {
