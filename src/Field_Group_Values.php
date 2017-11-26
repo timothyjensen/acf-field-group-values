@@ -9,7 +9,7 @@
  * @package     TimJensen\ACF\Field_Group_Values
  */
 
-declare( strict_types = 1 );
+declare( strict_types=1 );
 
 namespace TimJensen\ACF;
 
@@ -25,7 +25,7 @@ if ( ! class_exists( 'TimJensen\ACF\Field_Group_Values' ) ) :
 		 *
 		 * @var array
 		 */
-		protected $config;
+		public $config;
 
 		/**
 		 * Field group configuration array containing fields/groups to clone.
@@ -61,6 +61,7 @@ if ( ! class_exists( 'TimJensen\ACF\Field_Group_Values' ) ) :
 			$this->post_id      = $post_id;
 			$this->config       = $config['fields'];
 			$this->clone_fields = array_merge( [ $config ], $clone_fields );
+			$this->get_all_field_group_values( $this->config );
 		}
 
 		/**
@@ -68,11 +69,11 @@ if ( ! class_exists( 'TimJensen\ACF\Field_Group_Values' ) ) :
 		 *
 		 * @return array
 		 */
-		public function get_all_field_group_values(): array {
+		public function get_all_field_group_values( $config ): array {
 
 			$this->reset_results();
 
-			foreach ( $this->config as $field ) {
+			foreach ( $config as $field ) {
 
 				if ( ! $this->has_valid_field_structure( $field ) ) {
 					continue;
@@ -143,8 +144,8 @@ if ( ! class_exists( 'TimJensen\ACF\Field_Group_Values' ) ) :
 		protected function get_field_key( array $field ): string {
 			$field_key = $field['name'];
 
-			if ( isset( $field['field_key_prefix'] ) ) {
-				return $field['field_key_prefix'] . $field_key;
+			if ( isset( $field['meta_key_prefix'] ) ) {
+				return $field['meta_key_prefix'] . $field_key;
 			}
 
 			return $field_key;
@@ -161,6 +162,7 @@ if ( ! class_exists( 'TimJensen\ACF\Field_Group_Values' ) ) :
 				return get_option( "options_{$field_key}" );
 			} elseif ( is_string( $this->post_id ) && 'term_' === substr( $this->post_id, 0, 5 ) ) {
 				$term_id = (int) substr( $this->post_id, 5 );
+
 				return get_term_meta( $term_id, $field_key, true );
 			}
 
@@ -243,16 +245,17 @@ if ( ! class_exists( 'TimJensen\ACF\Field_Group_Values' ) ) :
 		 * Returns the values for repeater fields.
 		 *
 		 * @param array  $field       ACF field configuration.
-		 * @param string $field_key   Field key.
+		 * @param string $parent_meta_key   Field key.
 		 * @param array  $field_value Array of layout types for each flexible content row.
 		 * @return void
 		 */
-		protected function get_flexible_content_field_values( array $field, string $field_key, array $field_value ) {
-
+		protected function get_flexible_content_field_values( array $field, string $parent_meta_key, array $field_value
+		) {
 			$results = $this->results;
 
 			$layout_types = $this->get_flexible_content_layout_types( $field );
 
+			// Loop through the chosen layouts.
 			foreach ( $field_value as $index => $current_layout_type ) {
 
 				// Check if the layout has been deleted from the ACF group.
@@ -260,17 +263,15 @@ if ( ! class_exists( 'TimJensen\ACF\Field_Group_Values' ) ) :
 					continue;
 				}
 
-				$this->config = $layout_types[ $current_layout_type ]['sub_fields'];
+				$config = $layout_types[ $current_layout_type ]['sub_fields'];
 
-				foreach ( $this->config as &$field_config ) {
-					$field_config['field_key_prefix'] = $field_key . "_{$index}_";
-				}
+				$config = $this->set_meta_key_prefix( 'flexible_content', $config, $parent_meta_key, $index );
 
 				$results[ $field['name'] ][] = array_merge(
 					[
 						'acf_fc_layout' => $current_layout_type,
 					],
-					$this->get_all_field_group_values()
+					$this->get_all_field_group_values( $config )
 				);
 			}
 
@@ -289,7 +290,7 @@ if ( ! class_exists( 'TimJensen\ACF\Field_Group_Values' ) ) :
 
 			$results = $this->results;
 
-			$this->config = [];
+			$config = [];
 			foreach ( $field['clone'] as $clone_field_key ) {
 
 				$clone_field_config = $this->get_clone_field_config( $clone_field_key, $this->clone_fields );
@@ -299,21 +300,67 @@ if ( ! class_exists( 'TimJensen\ACF\Field_Group_Values' ) ) :
 					continue;
 				}
 
-				$this->config = array_merge( $this->config, $clone_field_config );
+				$config = array_merge( $config, $clone_field_config );
 			}
 
-			foreach ( $this->config as &$field_config ) {
+			$config = $this->set_meta_key_prefix( 'clone', $config );
 
-				// Build the field key prefix including ACF's option for prefixing, if set.
-				$prefix = empty( $field['field_key_prefix'] ) ? '' : $field['field_key_prefix'];
-				$prefix = empty( $field['prefix_name'] ) ? $prefix : "{$field['name']}_{$prefix}";
-
-				$field_config['field_key_prefix'] = $prefix;
-			}
-
-			$results[ $field['name'] ] = $this->get_all_field_group_values();
+			$results[ $field['name'] ] = $this->get_all_field_group_values( $config );
 
 			$this->results = $results;
+		}
+
+		/**
+		 * Sets the value for the meta key prefix and adds it to the field configuration array.
+		 *
+		 * @since 2.1.2
+		 *
+		 * @param string $field_type      Field type: 'clone', 'repeater', 'flexible_content', or 'group'.
+		 * @param array  $config          Field configuration.
+		 * @param string $parent_meta_key Meta key of the parent field.
+		 * @param int    $index           Loop index.
+		 * @return array
+		 */
+		protected function set_meta_key_prefix( string $field_type, array $config, string $parent_meta_key = '', int
+		$index
+		= 0 ): array {
+			switch ( $field_type ) {
+
+				case 'clone':
+					foreach ( $config as &$field_config ) {
+
+						// Build the field key prefix including ACF's option for prefixing, if set.
+						$prefix = empty( $field['meta_key_prefix'] ) ? '' : $field['meta_key_prefix'];
+						$prefix = empty( $field['prefix_name'] ) ? $prefix : "{$field['name']}_{$prefix}";
+
+						$field_config['meta_key_prefix'] = $prefix;
+					}
+
+					break;
+
+				case 'repeater':
+					foreach ( $config as &$field_config ) {
+						$field_config['meta_key_prefix'] = "{$parent_meta_key}_{$index}_";
+					}
+
+					break;
+
+				case 'flexible_content':
+					foreach ( $config as &$field_config ) {
+						$field_config['meta_key_prefix'] = "{$parent_meta_key}_{$index}_";
+					}
+
+					break;
+
+				case 'group':
+					foreach ( $config as &$field_config ) {
+						$field_config['meta_key_prefix'] = "{$parent_meta_key}_";
+					}
+
+					break;
+			}
+
+			return $config;
 		}
 
 		/**
@@ -370,21 +417,16 @@ if ( ! class_exists( 'TimJensen\ACF\Field_Group_Values' ) ) :
 		 * @since 1.4.0
 		 *
 		 * @param array  $field       ACF field configuration.
-		 * @param string $field_key   Field key.
+		 * @param string $parent_meta_key   Field key.
 		 * @param string $field_value Field value.
 		 * @return void
 		 */
-		protected function get_group_field_values( array $field, string $field_key, string $field_value ) {
-
+		protected function get_group_field_values( array $field, string $parent_meta_key, string $field_value ) {
 			$results = $this->results;
 
-			$this->config = $field['sub_fields'];
+			$field['sub_fields'] = $this->set_meta_key_prefix( 'group', $field['sub_fields'], $parent_meta_key );
 
-			foreach ( $this->config as &$field_config ) {
-				$field_config['field_key_prefix'] = $field_key . '_';
-			}
-
-			$results[ $field['name'] ] = $this->get_all_field_group_values();
+			$results[ $field['name'] ] = $this->get_all_field_group_values( $field['sub_fields'] );
 
 			$this->results = $results;
 		}
@@ -393,22 +435,17 @@ if ( ! class_exists( 'TimJensen\ACF\Field_Group_Values' ) ) :
 		 * Returns the custom field values for repeater fields.
 		 *
 		 * @param array  $field       ACF field configuration.
-		 * @param string $field_key   Field key.
+		 * @param string $parent_meta_key   Field key.
 		 * @param string $field_value Field value.
 		 * @return void
 		 */
-		protected function get_repeater_field_values( array $field, string $field_key, string $field_value ) {
-
+		protected function get_repeater_field_values( array $field, string $parent_meta_key, string $field_value ) {
 			$results = $this->results;
 
 			for ( $i = 0; $i < $field_value; $i ++ ) {
-				$this->config = $field['sub_fields'];
+				$field['sub_fields'] = $this->set_meta_key_prefix( 'repeater', $field['sub_fields'], $parent_meta_key, $i );
 
-				foreach ( $this->config as &$field_config ) {
-					$field_config['field_key_prefix'] = $field_key . "_{$i}_";
-				}
-
-				$results[ $field['name'] ][] = $this->get_all_field_group_values();
+				$results[ $field['name'] ][] = $this->get_all_field_group_values( $field['sub_fields'] );
 			}
 
 			$this->results = $results;
