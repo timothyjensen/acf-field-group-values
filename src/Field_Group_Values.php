@@ -37,7 +37,7 @@ if ( ! class_exists( 'TimJensen\ACF\Field_Group_Values' ) ) :
 		protected $clone_fields;
 
 		/**
-		 * Post ID or 'option'.
+		 * Post ID, 'option', or 'term_{id}'.
 		 *
 		 * @var int|string
 		 */
@@ -53,7 +53,7 @@ if ( ! class_exists( 'TimJensen\ACF\Field_Group_Values' ) ) :
 		/**
 		 * Field_Group_Values constructor.
 		 *
-		 * @param int|string $post_id      Post ID, 'options', or 'term_{id}'.
+		 * @param int|string $post_id      Post ID, 'option', or 'term_{id}'.
 		 * @param array      $config       Field group configuration array.
 		 * @param array      $clone_fields Field group configuration arrays for cloned fields/groups.
 		 */
