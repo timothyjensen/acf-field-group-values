@@ -181,7 +181,6 @@ if ( ! class_exists( 'TimJensen\ACF\Field_Group_Values' ) ) :
 		 * @return array
 		 */
 		protected function get_flexible_content_layout_types( array $field ): array {
-
 			$layout_types = [];
 			foreach ( $field['layouts'] as $layout ) {
 				$layout_types[ $layout['name'] ] = $layout;
@@ -269,46 +268,41 @@ if ( ! class_exists( 'TimJensen\ACF\Field_Group_Values' ) ) :
 		 * @return array
 		 */
 		protected function set_meta_key_prefix( string $field_type, array $config, string $parent_meta_key = '', int $index = 0 ): array {
-			switch ( $field_type ) {
 
-				case 'clone':
-					foreach ( $config as &$field_config ) {
+			foreach ( $config as &$field_config ) {
+
+				switch ( $field_type ) :
+
+					case 'group':
+						$field_config['meta_key_prefix'] = "{$parent_meta_key}_";
+
+						break;
+
+					case 'repeater':
+						$field_config['meta_key_prefix'] = "{$parent_meta_key}_{$index}_";
+
+						break;
+
+					case 'flexible_content':
+						$field_config['meta_key_prefix'] = "{$parent_meta_key}_{$index}_";
+
+						break;
+
+					case 'clone':
 						// Build the field key prefix including ACF's option for prefixing, if set.
 						$prefix = empty( $field['meta_key_prefix'] ) ? '' : $field['meta_key_prefix'];
 						$prefix = empty( $field['prefix_name'] ) ? $prefix : "{$field['name']}_{$prefix}";
 
 						$field_config['meta_key_prefix'] = $prefix;
-					}
 
-					break;
-
-				case 'repeater':
-					foreach ( $config as &$field_config ) {
-						$field_config['meta_key_prefix'] = "{$parent_meta_key}_{$index}_";
-					}
-
-					break;
-
-				case 'flexible_content':
-					foreach ( $config as &$field_config ) {
-						$field_config['meta_key_prefix'] = "{$parent_meta_key}_{$index}_";
-					}
-
-					break;
-
-				case 'group':
-					foreach ( $config as &$field_config ) {
-						$field_config['meta_key_prefix'] = "{$parent_meta_key}_";
-					}
-
-					break;
+				endswitch;
 			}
 
 			return $config;
 		}
 
 		/**
-		 * Recursively search for the appropriate clone configuration array.
+		 * Recursively search for the appropriate clone group/field configuration array.
 		 *
 		 * @since 1.4.0
 		 *
@@ -322,33 +316,33 @@ if ( ! class_exists( 'TimJensen\ACF\Field_Group_Values' ) ) :
 
 				if ( $field['key'] === $clone_field_key ) {
 
-					if ( $this->is_field_group( $field ) ) {
+					if ( isset( $field['fields'] ) ) {
+						// Return the matched field group.
 						return $field['fields'];
 					}
 
+					// Return the matched field in a new array.
 					return [ $field ];
 
-				} elseif ( $this->is_field_group( $field ) ) {
+				} elseif ( isset( $field['fields'] ) ) { // Field group.
+					$config = $field['fields'];
+				} elseif ( isset( $field['type'] ) && 'repeater' === $field['type'] ) { // Repeater.
+					$config = $field['sub_fields'];
+				} elseif ( isset( $field['type'] ) && 'group' === $field['type'] ) { // Group.
+					$config = $field['sub_fields'];
+				} elseif ( isset( $field['type'] ) && 'flexible_content' === $field['type'] ) { // Flexible Content.
+					$config = $field['layouts'];
+				}
 
-					$result = $this->get_clone_field_config( $clone_field_key, $field['fields'] );
+				if ( empty( $config ) ) {
+					// Stop recursion for the current field.
+					continue;
+				}
 
-					if ( $result ) {
-						return $result;
-					}
-				} elseif ( $this->is_repeater_field( $field ) || $this->is_group_field( $field ) ) {
+				$result = $this->get_clone_field_config( $clone_field_key, $config );
 
-					$result = $this->get_clone_field_config( $clone_field_key, $field['sub_fields'] );
-
-					if ( $result ) {
-						return $result;
-					}
-				} elseif ( $this->is_flexible_content_field( $field ) ) {
-
-					$result = $this->get_clone_field_config( $clone_field_key, $field['layouts'] );
-
-					if ( $result ) {
-						return $result;
-					}
+				if ( $result ) {
+					return $result;
 				}
 			}
 
