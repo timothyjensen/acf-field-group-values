@@ -5,21 +5,33 @@
  * @package Acf_Field_Group_Values
  */
 
-$_tests_dir = getenv( 'WP_TESTS_DIR' );
-if ( ! $_tests_dir ) {
-	$_tests_dir = '/tmp/wordpress-tests-lib';
+if ( ! defined( 'ABSPATH' ) ) {
+	define( 'ABSPATH', true );
 }
 
-// Give access to tests_add_filter() function.
-require_once $_tests_dir . '/includes/functions.php';
-
-/**
- * Manually load the plugin being tested.
- */
-function _manually_load_plugin() {
-	require dirname( dirname( __FILE__ ) ) . '/acf-field-group-values.php';
+function get_test_data( $type ) {
+	$test_data = include __DIR__ . '/test-data/test_data.php';
+	return $test_data[ $type ];
 }
-tests_add_filter( 'muplugins_loaded', '_manually_load_plugin' );
 
-// Start up the WP testing environment.
-require $_tests_dir . '/includes/bootstrap.php';
+function get_post_meta( $post_id = null, $key, $single = false ) {
+	$test_data = get_test_data( 'post_meta' );
+
+	return empty( $test_data[ $key ] ) ? '' : $test_data[ $key ];
+}
+
+function get_option( $key ) {
+	$test_data = get_test_data( 'options' );
+
+	$key = str_replace( 'options_', '', $key );
+
+	return empty( $test_data[ $key ] ) ? '' : $test_data[ $key ];
+}
+
+function get_term_meta( $post_id = null, $key, $single = false ) {
+	$test_data = get_test_data( 'term_meta' );
+
+	return empty( $test_data[ $key ] ) ? '' : $test_data[ $key ];
+}
+
+require dirname( dirname( __FILE__ ) ) . '/acf-field-group-values.php';

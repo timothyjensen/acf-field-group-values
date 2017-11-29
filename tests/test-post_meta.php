@@ -12,12 +12,6 @@ class Post_Meta extends Base {
 
 	public function setUp() {
 		parent::setUp();
-
-		$this->post_id = $this->factory->post->create();
-
-		array_walk( $this->test_meta, function( $value, $key ) {
-			update_post_meta( $this->post_id, $key, $value );
-		} );
 	}
 
 	/**

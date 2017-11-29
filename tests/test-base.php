@@ -8,7 +8,7 @@
 /**
  * Sample test case.
  */
-class Base extends WP_UnitTestCase {
+class Base extends PHPUnit_Framework_TestCase {
 
 	/**
 	 * ACF field group config.
@@ -53,7 +53,7 @@ class Base extends WP_UnitTestCase {
 	 * Returns the value for the specified key from the array of custom field values.
 	 *
 	 * @param string $lookup_key
-	 * @param array $all_values
+	 * @param array  $all_values
 	 * @return mixed
 	 */
 	protected function get_value_by_key( $lookup_key, $all_values ) {
@@ -65,5 +65,21 @@ class Base extends WP_UnitTestCase {
 		}
 
 		return $value;
+	}
+
+	/**
+	 * Call protected methods as public.
+	 *
+	 * @param \TimJensen\ACF\Field_Group_Values $instance    Instance of \TimJensen\ACF\Field_Group_Values
+	 * @param string                            $method_name Name of protected method.
+	 * @param array                             $args        Arguments to pass to the method.
+	 * @return mixed
+	 */
+	public static function call_protected_method( $instance, $method_name, array $args ) {
+		$class  = new \ReflectionClass( $instance );
+		$method = $class->getMethod( $method_name );
+		$method->setAccessible( true );
+
+		return $method->invokeArgs( $instance, $args );
 	}
 }

@@ -7,7 +7,7 @@
  * Author URI:      https://www.timjensen.us
  * Text Domain:     acf-field-group-values
  * Domain Path:     /languages
- * Version:         2.1.0
+ * Version:         2.1.2
  *
  * @package         TimJensen\ACF\Field_Group_Values
  */
@@ -41,7 +41,7 @@ if ( ! function_exists( 'get_all_custom_field_meta' ) ) :
 
 		$field_group_values = new \TimJensen\ACF\Field_Group_Values( $post_id, $config, $clone_fields );
 
-		return $field_group_values->get_all_field_group_values();
+		return $field_group_values->get_results();
 	}
 
 endif;

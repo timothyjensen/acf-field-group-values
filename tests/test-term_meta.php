@@ -20,12 +20,7 @@ class Term_Meta extends Base {
 	public function setUp() {
 		parent::setUp();
 
-		$this->term_id = $this->factory->term->create();
-		$this->post_id = "term_{$this->term_id}";
-
-		array_walk( $this->test_meta, function ( $value, $key ) {
-			update_term_meta( $this->term_id, $key, $value );
-		} );
+		$this->post_id = "term_{$this->post_id}";
 	}
 
 	/**

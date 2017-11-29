@@ -14,10 +14,6 @@ class Options extends Base {
 		parent::setUp();
 
 		$this->post_id = 'option';
-
-		array_walk( $this->test_meta, function( $value, $key ) {
-			update_option( "options_{$key}", $value );
-		} );
 	}
 
 	/**
