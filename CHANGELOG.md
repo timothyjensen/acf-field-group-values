@@ -4,9 +4,14 @@
 
 N/A
 
-## 2.1.2 - 2017-11-29
+## 2.2.0 - 2017-11-30
 ### Added
 - Unit tests.
+- Getter method in `Field_Group_Values()` class.
+- Deactivate plugin when PHP requirement is not met.
+
+### Changed
+- Do not run `get_all_field_group_values()` when class is instantiated.
 
 ## 2.1.1 - 2017-11-20
 ### Fixed
