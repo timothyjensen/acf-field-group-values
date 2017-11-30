@@ -9,7 +9,7 @@
  * @package     TimJensen\ACF\Field_Group_Values
  */
 
-declare( strict_types=1 );
+declare( strict_types = 1 );
 
 namespace TimJensen\ACF;
 
@@ -61,16 +61,15 @@ if ( ! class_exists( 'TimJensen\ACF\Field_Group_Values' ) ) :
 			$this->post_id      = $post_id;
 			$this->config       = $config['fields'];
 			$this->clone_fields = array_merge( [ $config ], $clone_fields );
-			$this->get_all_field_group_values( $this->config );
 		}
 
 		/**
 		 * Builds the multidimensional array that contains all the custom field values.
 		 *
+		 * @param array $config
 		 * @return array
 		 */
-		public function get_all_field_group_values( $config ): array {
-
+		public function get_all_field_group_values( array $config ): array {
 			$this->reset_results();
 
 			foreach ( $config as $field ) {
@@ -416,6 +415,10 @@ if ( ! class_exists( 'TimJensen\ACF\Field_Group_Values' ) ) :
 		 * @return array
 		 */
 		public function get_results(): array {
+			if ( empty( $this->results ) ) {
+				$this->get_all_field_group_values( $this->config );
+			}
+
 			return $this->results;
 		}
 	}

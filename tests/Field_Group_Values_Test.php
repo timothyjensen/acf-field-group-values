@@ -39,7 +39,9 @@ class Field_Group_Values_Test extends TestCase {
 		parent::setUp();
 
 		$this->instance = new \TimJensen\ACF\Field_Group_Values( $this->post_id, $this->config, $this->clone_fields );
-		$this->field    = $this->config['fields'][0];
+		$this->instance->get_results();
+
+		$this->field = $this->config['fields'][0];
 	}
 
 	/**
@@ -66,11 +68,13 @@ class Field_Group_Values_Test extends TestCase {
 	 * Tests reset_results().
 	 */
 	public function test_reset_results() {
-		$this->assertFalse( empty( $this->instance->get_results() ) );
+		$results_array = $this->instance->results;
+		$this->assertFalse( empty( $results_array ) );
 
 		$this->get_protected_method_result();
 
-		$this->assertTrue( empty( $this->instance->get_results() ) );
+		$reset_results_array = $this->instance->results;
+		$this->assertTrue( empty( $reset_results_array ) );
 	}
 
 	/**
