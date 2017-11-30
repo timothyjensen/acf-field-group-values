@@ -401,6 +401,16 @@ if ( ! class_exists( 'TimJensen\ACF\Field_Group_Values' ) ) :
 		}
 
 		/**
+		 * Getter method.
+		 *
+		 * @param string $property Name of the property to return.
+		 * @return mixed
+		 */
+		public function __get( $property ) {
+			return $this->{$property};
+		}
+
+		/**
 		 * Returns a multidimensional array containing all the custom field values.
 		 *
 		 * @return array
