@@ -1,6 +1,6 @@
 <?php
 return [
-	'post_meta' => [
+	'Post_Meta_Test' => [
 		'group'                                => '',
 		'group_text'                           => 'POST META: Group text field',
 		'group_nestedgroup'                    => '',

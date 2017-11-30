@@ -1,14 +1,22 @@
 <?php
 /**
- * Class Term_Meta
+ * Class Term_Meta_Test
  *
- * @package Acf_Field_Group_Values
+ * @package TimJensen\ACF\Tests
+ * @author      Tim Jensen <tim@timjensen.us>
+ * @license     GNU General Public License 2.0+
+ * @link        https://www.timjensen.us
+ * @since       2.1.2
  */
 
+namespace TimJensen\ACF\Tests;
+
 /**
- * Term Meta test case.
+ * Class Term_Meta_Test
+ *
+ * @package TimJensen\ACF\Tests
  */
-class Term_Meta extends Base {
+class Term_Meta_Test extends TestCase {
 
 	/**
 	 * Term ID.

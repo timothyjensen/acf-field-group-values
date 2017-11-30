@@ -15,7 +15,7 @@ function get_test_data( $type ) {
 }
 
 function get_post_meta( $post_id = null, $key, $single = false ) {
-	$test_data = get_test_data( 'post_meta' );
+	$test_data = get_test_data( 'Post_Meta_Test' );
 
 	return empty( $test_data[ $key ] ) ? '' : $test_data[ $key ];
 }
@@ -34,4 +34,9 @@ function get_term_meta( $post_id = null, $key, $single = false ) {
 	return empty( $test_data[ $key ] ) ? '' : $test_data[ $key ];
 }
 
-require dirname( dirname( __FILE__ ) ) . '/acf-field-group-values.php';
+require_once dirname( __DIR__ ) . '/acf-field-group-values.php';
+
+// Load Composer autoloader.
+if ( file_exists( dirname( __DIR__ ) . '/vendor/autoload.php' ) ) {
+	require_once dirname( __DIR__ ) . '/vendor/autoload.php';
+}

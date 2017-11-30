@@ -1,14 +1,20 @@
 <?php
 /**
- * Class Post_Meta
+ * Class Post_Meta_Test
  *
  * @package Acf_Field_Group_Values
+ * @author      Tim Jensen <tim@timjensen.us>
+ * @license     GNU General Public License 2.0+
+ * @link        https://www.timjensen.us
+ * @since       2.1.2
  */
 
+namespace TimJensen\ACF\Tests;
+
 /**
- * PostMeta test case.
+ * Class Post_Meta_Test
  */
-class Post_Meta extends Base {
+class Post_Meta_Test extends TestCase {
 
 	public function setUp() {
 		parent::setUp();

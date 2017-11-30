@@ -5,10 +5,16 @@
  * @package Acf_Field_Group_Values
  */
 
+namespace TimJensen\ACF\Tests;
+
+use PHPUnit\Framework\TestCase as PHPUnitTestCase;
+
 /**
- * Sample test case.
+ * Class TestCase
+ *
+ * @package TimJensen\ACF\Tests
  */
-class Base extends PHPUnit_Framework_TestCase {
+abstract class TestCase extends PHPUnitTestCase {
 
 	/**
 	 * ACF field group config.
@@ -16,6 +22,13 @@ class Base extends PHPUnit_Framework_TestCase {
 	 * @var array
 	 */
 	public $config = [];
+
+	/**
+	 * ACF clone fields config.
+	 *
+	 * @var array
+	 */
+	public $clone_fields = [];
 
 	/**
 	 * Post ID.
@@ -41,6 +54,9 @@ class Base extends PHPUnit_Framework_TestCase {
 	public function setUp() {
 		$this->config = json_decode( file_get_contents( __DIR__ . '/test-data/test_field_group.json' ), true );
 
+		$clone_field_1      = json_decode( file_get_contents( __DIR__ . '/test-data/test_clone_group.json' ), true );
+		$this->clone_fields = [ $clone_field_1 ];
+
 		$this->test_meta = include __DIR__ . '/test-data/test_data.php';
 	}
 
@@ -65,6 +81,52 @@ class Base extends PHPUnit_Framework_TestCase {
 		}
 
 		return $value;
+	}
+
+	/**
+	 * Get test field config by field type.
+	 *
+	 * @param string $type Field type.
+	 * @return array
+	 */
+	protected function get_field_config_by_type( $type ) {
+
+		foreach ( $this->config['fields'] as $field ) {
+
+			if ( $type === $field['type'] ) {
+
+				if ( 'clone' === $type ) {
+					$field = $this->get_clone_field_config( $field );
+				}
+
+				return $field;
+			}
+		}
+
+		return [];
+	}
+
+	/**
+	 * Get test clone field config.
+	 *
+	 * @param array $clone_field Clone field.
+	 * @return array
+	 */
+	protected function get_clone_field_config( array $clone_field ) {
+
+		$config = [];
+		foreach ( $clone_field['clone'] as $clone_field_key ) {
+			$clone_fields       = $this->instance->clone_fields;
+			$clone_field_config = self::call_protected_method(
+				$this->instance,
+				'get_clone_field_config',
+				[ $clone_field_key, $clone_fields ]
+			);
+
+			$config = array_merge( $config, $clone_field_config );
+		}
+
+		return $config;
 	}
 
 	/**

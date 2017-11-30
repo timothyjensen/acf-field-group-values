@@ -1,18 +1,22 @@
 <?php
 /**
- * Test Field_Group_Values
+ * Class Field_Group_Values_Test
  *
- * @package     TimJensen\ACF\Field_Group_Values
+ * @package     TimJensen\ACF\Tests
  * @author      Tim Jensen <tim@timjensen.us>
  * @license     GNU General Public License 2.0+
  * @link        https://www.timjensen.us
  * @since       2.1.2
  */
 
-require_once __DIR__ . '/bootstrap.php';
-require_once __DIR__ . '/test-base.php';
+namespace TimJensen\ACF\Tests;
 
-class Field_Group_Values extends Base {
+/**
+ * Class Field_Group_Values_Test
+ *
+ * @package TimJensen\ACF\Tests
+ */
+class Field_Group_Values_Test extends TestCase {
 
 	/**
 	 * Holds an instance of \TimJensen\ACF\Field_Group_Values.
@@ -34,7 +38,7 @@ class Field_Group_Values extends Base {
 	public function setUp() {
 		parent::setUp();
 
-		$this->instance = new \TimJensen\ACF\Field_Group_Values( $this->post_id, $this->config );
+		$this->instance = new \TimJensen\ACF\Field_Group_Values( $this->post_id, $this->config, $this->clone_fields );
 		$this->field    = $this->config['fields'][0];
 	}
 
@@ -85,7 +89,7 @@ class Field_Group_Values extends Base {
 	 */
 	public function test_get_field_key() {
 		$subfields = $this->get_protected_method_result( [ $this->field['type'], $this->field['sub_fields'], $this->field['name'] ],
-		'set_meta_key_prefix' );
+			'set_meta_key_prefix' );
 
 		$field_key = $this->get_protected_method_result( [ $subfields[0] ] );
 
@@ -129,41 +133,46 @@ class Field_Group_Values extends Base {
 		);
 	}
 
+	/**
+	 * Test set_meta_key_prefix().
+	 */
 	public function test_set_meta_key_prefix() {
 		$field_config = [ $this->field ];
 
 		$test_sets = [
 			[
 				'group',
-				$field_config,
+				$this->get_field_config_by_type( 'group' )['sub_fields'],
 				'parent_key',
 			],
 			[
 				'repeater',
-				$field_config,
+				$this->get_field_config_by_type( 'repeater' )['sub_fields'],
 				'parent_key',
 				1,
 			],
 			[
 				'flexible_content',
-				$field_config,
+				$this->get_field_config_by_type( 'flexible_content' )['layouts'],
 				'parent_key',
 				1,
 			],
 			[
 				'clone',
-				$field_config,
-				'parent_key',
+				$this->get_field_config_by_type( 'clone' ),
+				'',
 			],
 		];
 
 		foreach ( $test_sets as $test_set ) {
-			$result = $this->get_protected_method_result( $test_set );
+			$config = $this->get_protected_method_result( $test_set );
 
-			// var_dump( $result );
+			array_walk( $config, function ( $field_config ) use ( $test_set ) {
+				$expected_key = empty( $test_set[2] ) ? '' : $test_set[2] . '_';
+				$expected_key = isset( $test_set[3] ) ? $expected_key . $test_set[3] . '_' : $expected_key;
+
+				$this->assertEquals( $expected_key, $field_config['meta_key_prefix'] );
+			} );
 		}
-		// array_walk( $test_sets, function( $test_set ) {
-		// 	var_dump( $this->get_protected_method_result( $test_set, 'set_meta_key_prefix' ) );
-		// } );
 	}
 }
