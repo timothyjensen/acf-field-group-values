@@ -3,7 +3,7 @@
  * Field_Group_Values Class
  *
  * @author      Tim Jensen <tim@timjensen.us>
- * @license     GNU General Public License 2.0+
+ * @license     GNU General Public License 3.0+
  * @link        https://www.timjensen.us
  * @since       1.3.0
  * @package     TimJensen\ACF\Field_Group_Values

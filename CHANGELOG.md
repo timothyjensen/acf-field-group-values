@@ -4,6 +4,10 @@
 
 N/A
 
+## 2.2.1 - 2017-12-08
+### Fixed
+- Fatal error when PHP requirement is not met.
+
 ## 2.2.0 - 2017-11-30
 ### Added
 - Unit tests.
