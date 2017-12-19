@@ -1,8 +1,8 @@
 # Change Log for ACF Field Group Values
 
 ## Unreleased
-
-N/A
+### Fixed
+- Escaped HTML in the admin notice that displays when PHP requirement is not met.
 
 ## 2.2.1 - 2017-12-08
 ### Fixed
