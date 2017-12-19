@@ -45,13 +45,13 @@ if ( version_compare( PHP_VERSION, '7.0', '<' ) ) {
 	function get_all_custom_field_meta_deactivation_notice() {
 		$notice = sprintf(
 			// Translators: 1: Required PHP version, 2: Current PHP version.
-			esc_html__( 'ACF Field Group Values requires PHP %1$s or higher to run. This site uses %2$s, so the plugin has been <strong>deactivated</strong>.', 'acf-field-group-values' ),
+			__( 'ACF Field Group Values requires PHP %1$s or higher to run. This site uses %2$s, so the plugin has been <strong>deactivated</strong>.', 'acf-field-group-values' ),
 			'7.0',
 			PHP_VERSION
 		);
 
 		?>
-		<div class="notice notice-error"><p><?php echo $notice; // WPCS: XSS ok ?></p></div>
+		<div class="notice notice-error"><p><?php echo wp_kses_post( $notice ); ?></p></div>
 		<?php
 	}
 
