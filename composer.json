@@ -21,7 +21,8 @@
   "autoload": {
     "psr-4": {
       "TimJensen\\ACF\\": "src/"
-    }
+    },
+    "files": ["src/get_all_custom_field_meta.php"]
   },
   "autoload-dev": {
     "psr-4": {
