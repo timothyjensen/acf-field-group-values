@@ -14,7 +14,7 @@
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
-	die;
+	die();
 }
 
 if ( version_compare( PHP_VERSION, '7.0', '<' ) ) {
