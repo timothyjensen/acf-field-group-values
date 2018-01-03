@@ -7,7 +7,7 @@
  * Author URI:      https://www.timjensen.us
  * Text Domain:     acf-field-group-values
  * Domain Path:     /languages
- * Version:         2.2.1
+ * Version:         2.2.2
  *
  * @package         TimJensen\ACF\Field_Group_Values
  * @license         GPL-3.0+
