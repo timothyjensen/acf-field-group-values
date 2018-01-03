@@ -1,8 +1,11 @@
 # Change Log for ACF Field Group Values
 
-## Unreleased
+## 2.2.2 - 2018-01-02
 ### Fixed
 - Escaped HTML in the admin notice that displays when PHP requirement is not met.
+
+### Added
+- Autoload the helper function file to improve functionality when installed as a composer package.
 
 ## 2.2.1 - 2017-12-08
 ### Fixed
