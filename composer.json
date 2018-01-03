@@ -1,32 +1,36 @@
 {
-  "name": "timothyjensen/acf-field-group-values",
-  "description": "Retrieve all post meta and option values for the specified ACF field group",
-  "type": "library",
-  "license": "GPL-3.0+",
-  "authors": [
-    {
-      "name": "Tim Jensen",
-      "email": "tim@timjensen.us",
-      "homepage": "https://www.timjensen.us",
-      "role": "Developer"
-    }
-  ],
-  "minimum-stability": "dev",
-  "require": {
-    "php" : "^7.0"
-  },
-  "require-dev": {
-    "phpunit/phpunit": "^5"
-  },
-  "autoload": {
-    "psr-4": {
-      "TimJensen\\ACF\\": "src/"
+    "name": "timothyjensen/acf-field-group-values",
+    "description": "Retrieve all post meta and option values for the specified ACF field group",
+    "version": "2.2.2",
+    "type": "library",
+    "license": "GPL-3.0+",
+    "authors": [
+        {
+            "name": "Tim Jensen",
+            "email": "tim@timjensen.us",
+            "homepage": "https://www.timjensen.us",
+            "role": "Developer"
+        }
+    ],
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "require": {
+        "php": "^7.0"
     },
-    "files": ["src/get_all_custom_field_meta.php"]
-  },
-  "autoload-dev": {
-    "psr-4": {
-      "TimJensen\\ACF\\Tests\\": "tests/"
+    "require-dev": {
+        "phpunit/phpunit": "^6"
+    },
+    "autoload": {
+        "psr-4": {
+            "TimJensen\\ACF\\": "src/"
+        },
+        "files": [
+            "src/get_all_custom_field_meta.php"
+        ]
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "TimJensen\\ACF\\Tests\\": "tests/"
+        }
     }
-  }
 }
