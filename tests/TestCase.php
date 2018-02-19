@@ -1,6 +1,6 @@
 <?php
 /**
- * Class SampleTest
+ * Class TestCase
  *
  * @package Acf_Field_Group_Values
  */
@@ -52,12 +52,12 @@ abstract class TestCase extends PHPUnitTestCase {
 	public $meta_key = '';
 
 	public function setUp() {
-		$this->config = json_decode( file_get_contents( __DIR__ . '/test-data/test_field_group.json' ), true );
+		$this->config = json_decode( file_get_contents( TEST_DATA_DIR . '/test_field_group.json' ), true );
 
-		$clone_field_1      = json_decode( file_get_contents( __DIR__ . '/test-data/test_clone_group.json' ), true );
+		$clone_field_1      = json_decode( file_get_contents( TEST_DATA_DIR . '/test_clone_group.json' ), true );
 		$this->clone_fields = [ $clone_field_1 ];
 
-		$this->test_meta = include __DIR__ . '/test-data/test_data.php';
+		$this->test_meta = include TEST_DATA_DIR . '/test_data.php';
 	}
 
 	public function test_is_valid_config() {
@@ -143,5 +143,24 @@ abstract class TestCase extends PHPUnitTestCase {
 		$method->setAccessible( true );
 
 		return $method->invokeArgs( $instance, $args );
+	}
+
+	/**
+	 * Calls the protected method that has the name of the calling function, less the string 'test_'.
+	 * For example, the test method `test_has_valid_field_structure()` will call `has_valid_field_structure()`.
+	 *
+	 * @param array  $args Array of arguments to pass to \TimJensen\ACF\Field_Group_Values.
+	 * @param string $function
+	 * @return mixed
+	 */
+	protected function get_protected_method_result( array $args = [ null ], $function = '' ) {
+		// If no function is specified, get the name of the calling function and strip out 'test_'.
+		$function = $function ? $function : str_replace( 'test_', '', debug_backtrace()[1]['function'] );
+
+		return self::call_protected_method(
+			$this->instance,
+			$function,
+			$args
+		);
 	}
 }

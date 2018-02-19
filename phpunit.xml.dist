@@ -1,16 +1,36 @@
-<phpunit
-	bootstrap="tests/bootstrap.php"
-	backupGlobals="false"
-	colors="true"
-	convertErrorsToExceptions="true"
-	convertNoticesToExceptions="true"
-	convertWarningsToExceptions="true"
-	strict="true"
-	verbose="true"
-	>
-	<testsuites>
-		<testsuite>
-			<directory suffix="Test.php">tests</directory>
-		</testsuite>
-	</testsuites>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/5.7/phpunit.xsd"
+         bootstrap="tests/bootstrap.php"
+         backupGlobals="false"
+         beStrictAboutCoversAnnotation="true"
+         beStrictAboutOutputDuringTests="true"
+         beStrictAboutTestsThatDoNotTestAnything="true"
+         beStrictAboutTodoAnnotatedTests="true"
+         colors="true"
+         defaultTestSuite="default"
+         verbose="true">
+    <testsuites>
+        <testsuite name="default">
+            <directory suffix="Test.php">tests/Unit</directory>
+            <directory suffix="Test.php">tests/Integration</directory>
+        </testsuite>
+        <testsuite name="unit">
+            <directory suffix="Test.php">tests/Unit</directory>
+        </testsuite>
+        <testsuite name="integration">
+            <directory suffix="Test.php">tests/Integration</directory>
+        </testsuite>
+        <testsuite name="system">
+            <directory suffix="Test.php">tests/System</directory>
+        </testsuite>
+    </testsuites>
+    <filter>
+        <whitelist processUncoveredFilesFromWhitelist="true">
+            <directory suffix=".php">src</directory>
+        </whitelist>
+    </filter>
+    <logging>
+        <log type="coverage-text" target="php://stdout"/>
+        <log type="coverage-html" target="tmp/report"/>
+    </logging>
 </phpunit>

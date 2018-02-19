@@ -1,17 +1,23 @@
 <?php
+/**
+ * Test data.
+ */
+
 return [
-	'Post_Meta_Test' => [
+	'post_meta' => [
 		'group'                                => '',
 		'group_text'                           => 'POST META: Group text field',
 		'group_nestedgroup'                    => '',
 		'group_nestedgroup_subgroup1'          => 'POST META: Nested subgroup 1',
 		'group_nestedgroup_subgroup2'          => 'POST META: Nested subgroup 2',
+		'repeater_empty'                       => '',
 		'repeater'                             => '1',
 		'repeater_0_subfield'                  => 'POST META: Subfield',
 		'repeater_0_nestedrepeater_0_subfield' => 'POST META: Nested subfield 1',
 		'repeater_0_nestedrepeater_1_subfield' => 'POST META: Nested subfield 2',
 		'repeater_0_nestedrepeater'            => '2',
-		'flexcontent'                          => [ 'layout1', 'layout2' ],
+		'flexcontent_empty'                    => '',
+		'flexcontent'                          => [ 'layout1', 'layout2', 'deleted_layout' ],
 		'flexcontent_0_textfield'              => 'POST META: Layout 1 text field',
 		'flexcontent_1_wysiwyg'                => 'POST META: Layout 2 WYSIWYG',
 		'clone'                                => '',

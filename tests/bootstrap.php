@@ -5,36 +5,37 @@
  * @package Acf_Field_Group_Values
  */
 
-if ( ! defined( 'ABSPATH' ) ) {
-	define( 'ABSPATH', true );
+if ( ! defined( 'TEST_DATA_DIR' ) ) {
+	define( 'TEST_DATA_DIR', __DIR__ . '/test-data' );
 }
 
 function get_test_data( $type ) {
-	$test_data = include __DIR__ . '/test-data/test_data.php';
+	$test_data = include TEST_DATA_DIR . '/test_data.php';
+
 	return $test_data[ $type ];
 }
 
-function get_post_meta( $post_id = null, $key, $single = false ) {
-	$test_data = get_test_data( 'Post_Meta_Test' );
+function is_system_test() {
+	$phpunit_argv = $GLOBALS['argv'];
 
-	return empty( $test_data[ $key ] ) ? '' : $test_data[ $key ];
+	if ( array_search( '--testsuite=system', $phpunit_argv, true ) ) {
+		return true;
+	}
+
+	$phpunit_key = array_search( '--testsuite', $phpunit_argv, true );
+
+	return $phpunit_key && 'system' === $phpunit_argv[ $phpunit_key + 1 ];
 }
 
-function get_option( $key ) {
-	$test_data = get_test_data( 'options' );
+if ( is_system_test() ) {
+	$_tests_dir = getenv( 'WP_TESTS_DIR' );
+	if ( ! $_tests_dir ) {
+		$_tests_dir = '/tmp/wordpress-tests-lib';
+	}
 
-	$key = str_replace( 'options_', '', $key );
-
-	return empty( $test_data[ $key ] ) ? '' : $test_data[ $key ];
+	// Start up the WP testing environment.
+	require $_tests_dir . '/includes/bootstrap.php';
 }
-
-function get_term_meta( $post_id = null, $key, $single = false ) {
-	$test_data = get_test_data( 'term_meta' );
-
-	return empty( $test_data[ $key ] ) ? '' : $test_data[ $key ];
-}
-
-require_once dirname( __DIR__ ) . '/acf-field-group-values.php';
 
 // Load Composer autoloader.
 if ( file_exists( dirname( __DIR__ ) . '/vendor/autoload.php' ) ) {

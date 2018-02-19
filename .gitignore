@@ -6,4 +6,6 @@ node_modules/
 *.tar.gz
 *.zip
 acf-json
+composer.lock
+tmp
 vendor/

@@ -1,5 +1,18 @@
 # Change Log for ACF Field Group Values
 
+## 2.3.0 - 2018-05-06
+### Added
+- Mutation testing using Infection
+- Restructured tests as Unit, Integration, and System
+- Test for get_clone_field_config method
+- Support for 'option' or 'options' key
+
+### Updated
+- Travis ci script
+
+### Fixed
+- Fatal error in rare cases when the package is installed as both a Composer dependency and a WordPress plugin, AND the site does not meet the PHP requirement.
+
 ## 2.2.2 - 2018-01-02
 ### Fixed
 - Escaped HTML in the admin notice that displays when PHP requirement is not met.

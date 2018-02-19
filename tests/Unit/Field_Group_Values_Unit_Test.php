@@ -1,6 +1,6 @@
 <?php
 /**
- * Class Field_Group_Values_Test
+ * Class Field_Group_Values_Unit_Test
  *
  * @package     TimJensen\ACF\Tests
  * @author      Tim Jensen <tim@timjensen.us>
@@ -11,12 +11,15 @@
 
 namespace TimJensen\ACF\Tests;
 
+use Brain\Monkey;
+use TimJensen\ACF\Field_Group_Values;
+
 /**
- * Class Field_Group_Values_Test
+ * Class Field_Group_Values_Unit_Test
  *
  * @package TimJensen\ACF\Tests
  */
-class Field_Group_Values_Test extends TestCase {
+class Field_Group_Values_Unit_Test extends TestCase {
 
 	/**
 	 * Holds an instance of \TimJensen\ACF\Field_Group_Values.
@@ -33,35 +36,44 @@ class Field_Group_Values_Test extends TestCase {
 	protected $field;
 
 	/**
-	 * Test setup
+	 * Test setup.
 	 */
 	public function setUp() {
+		Monkey\setUp();
 		parent::setUp();
 
-		$this->instance = new \TimJensen\ACF\Field_Group_Values( $this->post_id, $this->config, $this->clone_fields );
-		$this->instance->get_results();
+		Monkey\Functions\stubs( [
+			'get_post_meta' => function ( $post_id = null, $key, $single = false ) {
+				$test_data = \get_test_data( 'post_meta' );
 
-		$this->field = $this->config['fields'][0];
+				return empty( $test_data[ $key ] ) ? '' : $test_data[ $key ];
+			},
+			'get_option'    => function ( $key ) {
+				$test_data = \get_test_data( 'options' );
+
+				$key = str_replace( 'options_', '', $key );
+
+				return empty( $test_data[ $key ] ) ? '' : $test_data[ $key ];
+			},
+			'get_term_meta' => function ( $post_id = null, $key, $single = false ) {
+				$test_data = \get_test_data( 'term_meta' );
+
+				return empty( $test_data[ $key ] ) ? '' : $test_data[ $key ];
+			},
+		] );
+
+		$this->instance = new Field_Group_Values( $this->post_id, $this->config, $this->clone_fields );
+		$this->field    = $this->config['fields'][0];
+
+		$this->instance->get_results();
 	}
 
 	/**
-	 * Calls the protected method that has the name of the calling function, less the string 'test_'.
-	 * For example, the test method `test_has_valid_field_structure()` will call `has_valid_field_structure()`.
-	 *
-	 * @param array  $args Array of arguments to pass to \TimJensen\ACF\Field_Group_Values.
-	 * @param string $function
-	 * @return mixed
+	 * Test tear down.
 	 */
-	protected function get_protected_method_result( array $args = [ null ], $function = '' ) {
-
-		// If no function is specified, get the name of the calling function and strip out 'test_'.
-		$function = $function ? $function : str_replace( 'test_', '', debug_backtrace()[1]['function'] );
-
-		return self::call_protected_method(
-			$this->instance,
-			$function,
-			$args
-		);
+	public function tearDown() {
+		Monkey\tearDown();
+		parent::tearDown();
 	}
 
 	/**
@@ -73,8 +85,8 @@ class Field_Group_Values_Test extends TestCase {
 
 		$this->get_protected_method_result();
 
-		$reset_results_array = $this->instance->results;
-		$this->assertTrue( empty( $reset_results_array ) );
+		$results_array = $this->instance->results;
+		$this->assertTrue( empty( $results_array ) );
 	}
 
 	/**
@@ -92,8 +104,14 @@ class Field_Group_Values_Test extends TestCase {
 	 * Test get_field_key().
 	 */
 	public function test_get_field_key() {
-		$subfields = $this->get_protected_method_result( [ $this->field['type'], $this->field['sub_fields'], $this->field['name'] ],
-			'set_meta_key_prefix' );
+		$subfields = $this->get_protected_method_result(
+			[
+				$this->field['type'],
+				$this->field['sub_fields'],
+				$this->field['name'],
+			],
+			'set_meta_key_prefix'
+		);
 
 		$field_key = $this->get_protected_method_result( [ $subfields[0] ] );
 
@@ -107,21 +125,23 @@ class Field_Group_Values_Test extends TestCase {
 	 * Test get_field_value().
 	 */
 	public function test_get_field_value() {
-
+		// Post meta.
 		$field_value = $this->get_protected_method_result( [ 'group_text' ] );
-
 		$this->assertEquals( 'POST META: Group text field', $field_value );
 
-		$this->instance = new \TimJensen\ACF\Field_Group_Values( 'option', $this->config );
-
-		$field_value = $this->get_protected_method_result( [ 'group_text' ] );
-
+		// Option.
+		$this->instance = new Field_Group_Values( 'option', $this->config );
+		$field_value    = $this->get_protected_method_result( [ 'group_text' ] );
 		$this->assertEquals( 'OPTION: Group text field', $field_value );
 
-		$this->instance = new \TimJensen\ACF\Field_Group_Values( 'term_id_2', $this->config );
+		// Option, alternate key.
+		$this->instance = new Field_Group_Values( 'options', $this->config );
+		$field_value    = $this->get_protected_method_result( [ 'group_text' ] );
+		$this->assertEquals( 'OPTION: Group text field', $field_value );
 
-		$field_value = $this->get_protected_method_result( [ 'group_text' ] );
-
+		// Term meta.
+		$this->instance = new Field_Group_Values( 'term_2', $this->config );
+		$field_value    = $this->get_protected_method_result( [ 'group_text' ] );
 		$this->assertEquals( 'TERM META: Group text field', $field_value );
 	}
 
@@ -178,5 +198,24 @@ class Field_Group_Values_Test extends TestCase {
 				$this->assertEquals( $expected_key, $field_config['meta_key_prefix'] );
 			} );
 		}
+	}
+
+	public function test_get_clone_field_config() {
+		// From test_field_group.json.
+		$clone_field_keys = [ 'group_5a14771d289be', 'field_5a1479742d333' ];
+
+		$expected_config_1  = $this->instance->clone_fields[1]['fields'];
+		$clone_field_config = $this->get_protected_method_result( [
+			'group_5a14771d289be',
+			$this->instance->clone_fields,
+		] );
+		$this->assertEquals( $expected_config_1, $clone_field_config );
+
+		$expected_config_2  = $this->instance->clone_fields[1]['fields'][1]['sub_fields'];
+		$clone_field_config = $this->get_protected_method_result( [
+			'field_5a1479742d333',
+			$this->instance->clone_fields,
+		] );
+		$this->assertEquals( $expected_config_2, $clone_field_config );
 	}
 }

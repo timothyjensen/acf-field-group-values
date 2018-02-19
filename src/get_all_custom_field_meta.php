@@ -24,9 +24,9 @@ if ( ! function_exists( 'get_all_custom_field_meta' ) ) :
 	 */
 	function get_all_custom_field_meta( $post_id, array $config, array $clone_fields = [] ): array {
 		if ( empty( $config['fields'] ) ) {
-			trigger_error( 'As of version 2.0.0 the $config argument should include the field group key in addition to the array of fields. Pass $config instead of $config[\'fields\'].', E_USER_WARNING );
 			$corrected_config['fields'] = $config;
 			$config                     = $corrected_config;
+			trigger_error( 'As of version 2.0.0 the $config argument should include the field group key in addition to the array of fields. Pass $config instead of $config[\'fields\'].', E_USER_WARNING );
 		}
 
 		$field_group_values = new \TimJensen\ACF\Field_Group_Values( $post_id, $config, $clone_fields );

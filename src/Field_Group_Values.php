@@ -84,7 +84,7 @@ if ( ! class_exists( 'TimJensen\ACF\Field_Group_Values' ) ) :
 				switch ( $field['type'] ) :
 
 					case 'group':
-						$this->get_group_field_values( $field, $field_key, $field_value );
+						$this->get_group_field_values( $field, $field_key );
 
 						break;
 
@@ -136,7 +136,7 @@ if ( ! class_exists( 'TimJensen\ACF\Field_Group_Values' ) ) :
 		 * @return bool
 		 */
 		protected function has_valid_field_structure( array $field ): bool {
-			return ! empty( $field['name'] );
+			return ! empty( $field['name'] ) && ! empty( $field['type'] );
 		}
 
 		/**
@@ -156,15 +156,16 @@ if ( ! class_exists( 'TimJensen\ACF\Field_Group_Values' ) ) :
 		}
 
 		/**
-		 * Retrieve the value for the specified field, either from the options table or post meta table.
+		 * Retrieve the value for the specified field from the options, term_meta, or post meta tables.
 		 *
 		 * @param string $field_key Custom field key.
 		 * @return mixed
 		 */
 		protected function get_field_value( string $field_key ) {
-			if ( 'option' === $this->post_id ) {
+			// Allow 'option' or 'options'.
+			if ( in_array( $this->post_id, [ 'option', 'options' ], true ) ) {
 				return get_option( "options_{$field_key}" );
-			} elseif ( is_string( $this->post_id ) && 'term_' === substr( $this->post_id, 0, 5 ) ) {
+			} elseif ( 'term_' === substr( (string) $this->post_id, 0, 5 ) ) {
 				$term_id = (int) substr( $this->post_id, 5 );
 
 				return get_term_meta( $term_id, $field_key, true );
@@ -355,10 +356,9 @@ if ( ! class_exists( 'TimJensen\ACF\Field_Group_Values' ) ) :
 		 *
 		 * @param array  $field           ACF field configuration.
 		 * @param string $parent_meta_key Field key.
-		 * @param string $field_value     Field value.
 		 * @return void
 		 */
-		protected function get_group_field_values( array $field, string $parent_meta_key, string $field_value ) {
+		protected function get_group_field_values( array $field, string $parent_meta_key ) {
 			$results = $this->results;
 
 			$field['sub_fields'] = $this->set_meta_key_prefix( 'group', $field['sub_fields'], $parent_meta_key );
