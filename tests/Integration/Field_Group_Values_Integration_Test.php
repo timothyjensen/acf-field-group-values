@@ -113,7 +113,10 @@ class Field_Group_Values_Integration_Test extends TestCase {
 			'group',
 			'repeater',
 			'flexcontent',
-			'clone',
+			'clone-text',
+			'clone-repeater',
+			'clone-flexcontent',
+			'subfield',
 		];
 
 		array_walk( $expected_keys, function ( $expected_key ) {
@@ -144,19 +147,19 @@ class Field_Group_Values_Integration_Test extends TestCase {
 	 * Tests get_clone_field_values().
 	 */
 	public function test_get_clone_field_values() {
-		$clone_field_name = $this->clone_field['name'];
+		$clone_field_names = array_column( $this->clone_fields[0]['fields'], 'name' );
 
-		$this->assertArrayNotHasKey( $clone_field_name, $this->instance->results );
+		array_walk( $clone_field_names, function( $clone_field_name ) {
+			$this->assertArrayNotHasKey( $clone_field_name, $this->instance->results );
+		} );
 
 		$test_data = \get_test_data( 'post_meta' );
 
-		$this->get_protected_method_result( [
-			$this->clone_field,
-			'',
-			$test_data[ $clone_field_name ],
-		] );
+		$this->get_protected_method_result( [ $this->clone_field ] );
 
-		$this->assertArrayHasKey( $clone_field_name, $this->instance->results );
+		array_walk( $clone_field_names, function( $clone_field_name ) {
+			$this->assertArrayHasKey( $clone_field_name, $this->instance->results );
+		} );
 	}
 
 	/**

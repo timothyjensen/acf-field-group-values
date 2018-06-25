@@ -107,68 +107,51 @@ class Get_All_Custom_Field_Meta_System_Test extends TestCase {
 		);
 	}
 
+	/**
+	 * Test that retrieved field values match what is returned by get_post_meta.
+	 */
 	public function test_post_meta_field_group_values() {
-		$field_group_values = get_all_custom_field_meta( $this->post_id, $this->config, $this->clone_fields );
+		$get_all_custom_field_meta = get_all_custom_field_meta( $this->post_id, $this->config, $this->clone_fields );
 
-		$post_meta_test_data = \get_test_data( 'post_meta' );
+		$test_keys = include TEST_DATA_DIR . '/test_keys.php';
 
-		array_walk( $post_meta_test_data, function ( $meta_value, $meta_key ) use ( $field_group_values ) {
-			if ( ! $this->should_compare_with_results_array( $meta_value ) ) {
-				return;
-			}
-
-			$results_value = $this->lookup_value_in_results_array( $field_group_values, $meta_key );
-			$this->assertEquals( $meta_value, $results_value );
+		array_walk( $test_keys, function( $lookup_value, $meta_key ) use ( $get_all_custom_field_meta ) {
+			$this->assertEquals(
+				get_post_meta( $this->post_id, $meta_key, true ),
+				$this->get_value_by_key( $lookup_value, $get_all_custom_field_meta )
+			);
 		} );
 	}
 
+	/**
+	 * Test that retrieved field values match what is returned by get_term_meta.
+	 */
 	public function test_term_meta_field_group_values() {
-		$field_group_values = get_all_custom_field_meta( "term_{$this->term_id}", $this->config, $this->clone_fields );
+		$get_all_custom_field_meta = get_all_custom_field_meta( "term_{$this->term_id}", $this->config, $this->clone_fields );
 
-		$post_meta_test_data = \get_test_data( 'term_meta' );
+		$test_keys = include TEST_DATA_DIR . '/test_keys.php';
 
-		array_walk( $post_meta_test_data, function ( $meta_value, $meta_key ) use ( $field_group_values ) {
-			if ( ! $this->should_compare_with_results_array( $meta_value ) ) {
-				return;
-			}
-
-			$results_value = $this->lookup_value_in_results_array( $field_group_values, $meta_key );
-			$this->assertEquals( $meta_value, $results_value );
+		array_walk( $test_keys, function( $lookup_value, $meta_key ) use ( $get_all_custom_field_meta ) {
+			$this->assertEquals(
+				get_term_meta( $this->term_id, $meta_key, true ),
+				$this->get_value_by_key( $lookup_value, $get_all_custom_field_meta )
+			);
 		} );
 	}
 
+	/**
+	 * Test that retrieved field values match what is returned by get_option.
+	 */
 	public function test_option_field_group_values() {
-		$field_group_values = get_all_custom_field_meta( 'option', $this->config, $this->clone_fields );
+		$get_all_custom_field_meta = get_all_custom_field_meta( 'option', $this->config, $this->clone_fields );
 
-		$post_meta_test_data = \get_test_data( 'options' );
+		$test_keys = include TEST_DATA_DIR . '/test_keys.php';
 
-		array_walk( $post_meta_test_data, function ( $meta_value, $meta_key ) use ( $field_group_values ) {
-			if ( ! $this->should_compare_with_results_array( $meta_value ) ) {
-				return;
-			}
-
-			$results_value = $this->lookup_value_in_results_array( $field_group_values, $meta_key );
-			$this->assertEquals( $meta_value, $results_value );
+		array_walk( $test_keys, function( $lookup_value, $meta_key ) use ( $get_all_custom_field_meta ) {
+			$this->assertEquals(
+				get_option( "options_{$meta_key}" ),
+				$this->get_value_by_key( $lookup_value, $get_all_custom_field_meta )
+			);
 		} );
-	}
-
-	protected function should_compare_with_results_array( $meta_value ) {
-		return is_string( $meta_value ) && ! empty( $meta_value ) && ! is_numeric( $meta_value );
-	}
-
-	protected function lookup_value_in_results_array( $field_group_values, $meta_key ) {
-		$array_dimensions = explode( '_', $meta_key );
-
-		$result = $field_group_values;
-		foreach ( $array_dimensions as $partial_key ) {
-			// Account for clone fields.
-			if ( isset( $result[ $partial_key ] ) ) {
-				$result = $result[ $partial_key ];
-			} else {
-				$result = $result['clone'][ $partial_key ];
-			}
-		}
-
-		return $result;
 	}
 }

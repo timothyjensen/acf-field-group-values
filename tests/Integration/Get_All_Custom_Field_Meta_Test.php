@@ -94,14 +94,15 @@ class Get_All_Custom_Field_Meta_Test extends TestCase {
 	 * returned by get_post_meta().
 	 */
 	public function test_options_get_all_custom_field_meta() {
-		$get_all_custom_field_meta = get_all_custom_field_meta( 'option', $this->config );
+		$get_all_custom_field_meta = get_all_custom_field_meta( 'option', $this->config, $this->clone_fields );
 
 		$test_keys = include TEST_DATA_DIR . '/test_keys.php';
 
-		array_walk( $test_keys, function( $test_key ) use ( $get_all_custom_field_meta ) {
+		array_walk( $test_keys, function ( $lookup_value, $meta_key ) use ( $get_all_custom_field_meta ) {
+
 			$this->assertEquals(
-				get_option( "options_{$test_key}" ),
-				$this->get_value_by_key( $test_key, $get_all_custom_field_meta )
+				get_option( "options_{$meta_key}" ),
+				$this->get_value_by_key( $lookup_value, $get_all_custom_field_meta )
 			);
 		} );
 	}
@@ -111,15 +112,15 @@ class Get_All_Custom_Field_Meta_Test extends TestCase {
 	 * returned by get_post_meta().
 	 */
 	public function test_post_meta_get_all_custom_field_meta() {
-		$get_all_custom_field_meta = get_all_custom_field_meta( $this->post_id, $this->config );
+		$get_all_custom_field_meta = get_all_custom_field_meta( $this->post_id, $this->config, $this->clone_fields );
 
 		$test_keys = include TEST_DATA_DIR . '/test_keys.php';
 
-		array_walk( $test_keys, function( $test_key ) use ( $get_all_custom_field_meta ) {
+		array_walk( $test_keys, function ( $lookup_value, $meta_key ) use ( $get_all_custom_field_meta ) {
 
 			$this->assertEquals(
-				get_post_meta( $this->post_id, $test_key, true ),
-				$this->get_value_by_key( $test_key, $get_all_custom_field_meta )
+				get_post_meta( $this->post_id, $meta_key, true ),
+				$this->get_value_by_key( $lookup_value, $get_all_custom_field_meta )
 			);
 
 		} );
@@ -135,16 +136,16 @@ class Get_All_Custom_Field_Meta_Test extends TestCase {
 		$get_all_custom_field_meta = get_all_custom_field_meta( $this->post_id, $this->config, [ $clone_config ] );
 
 		$clone_keys = [
-			'clone-text',
-			'clone-repeater_0_subfield',
-			'clone-repeater_1_subfield',
+			'clone-text'                => 'clone-text',
+			'clone-repeater_0_subfield' => 'clone-repeater.0.subfield',
+			'clone-repeater_1_subfield' => 'clone-repeater.1.subfield',
 		];
 
-		array_walk( $clone_keys, function( $clone_key ) use ( $get_all_custom_field_meta ) {
+		array_walk( $clone_keys, function ( $lookup_value, $clone_key ) use ( $get_all_custom_field_meta ) {
 
 			$this->assertEquals(
-				get_post_meta( $this->post_id, $clone_key, true ),
-				$this->get_value_by_key( "clone_$clone_key", $get_all_custom_field_meta )
+				\get_post_meta( $this->post_id, $clone_key, true ),
+				$this->get_value_by_key( $lookup_value, $get_all_custom_field_meta )
 			);
 
 		} );
@@ -155,14 +156,14 @@ class Get_All_Custom_Field_Meta_Test extends TestCase {
 	 * returned by get_post_meta().
 	 */
 	public function test_term_meta_get_all_custom_field_meta() {
-		$get_all_custom_field_meta = get_all_custom_field_meta( 'term_0', $this->config );
+		$get_all_custom_field_meta = get_all_custom_field_meta( 'term_0', $this->config, $this->clone_fields );
 
 		$test_keys = include TEST_DATA_DIR . '/test_keys.php';
 
-		array_walk( $test_keys, function ( $test_key ) use ( $get_all_custom_field_meta ) {
+		array_walk( $test_keys, function ( $lookup_value, $meta_key ) use ( $get_all_custom_field_meta ) {
 			$this->assertEquals(
-				get_term_meta( 0, $test_key, true ),
-				$this->get_value_by_key( $test_key, $get_all_custom_field_meta )
+				get_term_meta( 0, $meta_key, true ),
+				$this->get_value_by_key( $lookup_value, $get_all_custom_field_meta )
 			);
 		} );
 	}

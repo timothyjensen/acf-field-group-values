@@ -452,9 +452,9 @@
     "location": [
         [
             {
-                "param": "page_template",
+                "param": "post_type",
                 "operator": "==",
-                "value": "default"
+                "value": "page"
             }
         ],
         [
@@ -480,5 +480,5 @@
     "hide_on_screen": "",
     "active": 1,
     "description": "",
-    "modified": 1519515732
+    "modified": 1532188993
 }

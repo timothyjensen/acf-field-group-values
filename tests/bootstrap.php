@@ -6,7 +6,7 @@
  */
 
 if ( ! defined( 'TEST_DATA_DIR' ) ) {
-	define( 'TEST_DATA_DIR', __DIR__ . '/test-data' );
+	define( 'TEST_DATA_DIR', __DIR__ . '/fixtures' );
 }
 
 function get_test_data( $type ) {

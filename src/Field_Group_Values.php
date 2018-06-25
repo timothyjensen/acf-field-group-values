@@ -249,9 +249,25 @@ if ( ! class_exists( 'TimJensen\ACF\Field_Group_Values' ) ) :
 				$config = array_merge( $config, $clone_field_config );
 			}
 
-			$config = $this->set_meta_key_prefix( 'clone', $config );
+			// Build the field key prefix including ACF's option for prefixing, if set. The prefix is only used for
+			// retrieving meta values, not for storing the values in the returned array.
+			$meta_key_prefix = $field['meta_key_prefix'] ?? '';
 
-			$results[ $field['name'] ] = $this->get_all_field_group_values( $config );
+			if ( $field['prefix_name'] ) {
+				$meta_key_prefix .= "{$field['name']}_";
+			}
+
+			$config = $this->set_meta_key_prefix( 'clone', $config, $meta_key_prefix );
+
+			// ACF optionally saves the data in a prefixed format, so we need to account for that.
+			if ( $field['prefix_name'] ) {
+				$this->result_key_prefix = $field['name'];
+			}
+
+			$results = array_merge( $results, $this->get_all_field_group_values( $config ) );
+
+			// Ensure the prefix does not get applied to other fields.
+			unset( $this->result_key_prefix );
 
 			$this->results = $results;
 		}
@@ -289,11 +305,7 @@ if ( ! class_exists( 'TimJensen\ACF\Field_Group_Values' ) ) :
 						break;
 
 					case 'clone':
-						// Build the field key prefix including ACF's option for prefixing, if set.
-						$prefix = empty( $field['meta_key_prefix'] ) ? '' : $field['meta_key_prefix'];
-						$prefix = empty( $field['prefix_name'] ) ? $prefix : "{$field['name']}_{$prefix}";
-
-						$field_config['meta_key_prefix'] = $prefix;
+						$field_config['meta_key_prefix'] = $parent_meta_key;
 
 				endswitch;
 			}
@@ -324,13 +336,11 @@ if ( ! class_exists( 'TimJensen\ACF\Field_Group_Values' ) ) :
 					// Return the matched field in a new array.
 					return [ $field ];
 
-				} elseif ( isset( $field['fields'] ) ) { // Field group.
+				} elseif ( isset( $field['fields'] ) ) { // Whole field group.
 					$config = $field['fields'];
-				} elseif ( isset( $field['type'] ) && 'repeater' === $field['type'] ) { // Repeater.
+				} elseif ( isset( $field['sub_fields'] ) ) { // Repeater, Group, and Flex Content layouts.
 					$config = $field['sub_fields'];
-				} elseif ( isset( $field['type'] ) && 'group' === $field['type'] ) { // Group.
-					$config = $field['sub_fields'];
-				} elseif ( isset( $field['type'] ) && 'flexible_content' === $field['type'] ) { // Flexible Content.
+				} elseif ( isset( $field['layouts'] ) ) { // Flexible Content.
 					$config = $field['layouts'];
 				}
 
@@ -393,10 +403,14 @@ if ( ! class_exists( 'TimJensen\ACF\Field_Group_Values' ) ) :
 		 *
 		 * @param array        $field       ACF field configuration.
 		 * @param string|array $field_value Field value.
-		 * @return void
 		 */
 		protected function store_field_value( array $field, $field_value ) {
-			$this->results[ $field['name'] ] = $field_value;
+			// ACF allows clone fields to be prefixed.
+			$result_key = ! empty( $this->result_key_prefix )
+				? "{$this->result_key_prefix}_{$field['name']}"
+				: $field['name'];
+
+			$this->results[ $result_key ] = $field_value;
 		}
 
 		/**

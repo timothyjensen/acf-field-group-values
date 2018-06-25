@@ -75,7 +75,7 @@ abstract class TestCase extends PHPUnitTestCase {
 	protected function get_value_by_key( $lookup_key, $all_values ) {
 		$value = $all_values;
 
-		$key_fragments = explode( '_', $lookup_key );
+		$key_fragments = explode( '.', $lookup_key );
 		foreach ( $key_fragments as $key ) {
 			$value = $value[ $key ];
 		}
