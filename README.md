@@ -77,7 +77,7 @@ As of version 2.0.0 the `$config` argument must contain all data from the acf fi
 
 ## Example Results
 
-In the test results below `get_all_custom_field_meta()` was 600% faster than `get_field()` and required 19 fewer database queries.
+In the test results below `get_all_custom_field_meta()` was 600% faster than `get_field()` and required 19 fewer database queries.  Note that the returned values are raw meta values as opposed to formatted values that can be returned by `get_field()`. 
 
 ```php
 <?php
