@@ -114,12 +114,11 @@ $results = [
 			'flex_content_field' => 'Flex content type 2',
 		],
 	],
-	'clone'            => [
-		'group_1'  => 'Cloned group 1',
-		'subgroup' => [
-			'subgroup1' => 'Cloned subgroup 1',
-			'subgroup2' => 'Cloned subgroup 2',
-		],
+	// The following are cloned fields.
+	'group_1'  => 'Cloned group 1',
+	'subgroup' => [
+		'subgroup1' => 'Cloned subgroup 1',
+		'subgroup2' => 'Cloned subgroup 2',
 	],
 ];
 ```
