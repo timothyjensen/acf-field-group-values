@@ -1,12 +1,16 @@
 # Change Log for ACF Field Group Values
 
 ## 3.0.0 - 2018-07-21
-### Fixed
+### Changed
 - Changed array keys used for storing clone fields to be more consistent with how ACF stores the meta in the database. **This is a breaking change for those using clone fields.** 
-- Added support for prefixing clone fields
-- Added support for nested clone fields
 - Update tests to reflect the change related to storing clone field values 
 - Renamed test data directory
+
+### Added
+- Added support for prefixing clone fields
+
+### Fixed
+- Fixed issue with nested clone fields not returning correct values
 
 ## 2.3.0 - 2018-05-06
 ### Added
