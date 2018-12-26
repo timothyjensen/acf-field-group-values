@@ -1,5 +1,9 @@
 # Change Log for ACF Field Group Values
 
+## 3.1.0 - 2018-12-26
+### Added
+- Added support for user meta - props @Boldairdev.
+
 ## 3.0.0 - 2018-07-21
 ### Changed
 - Changed array keys used for storing clone fields to be more consistent with how ACF stores the meta in the database. **This is a breaking change for those using clone fields.** 
