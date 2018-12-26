@@ -169,9 +169,10 @@ if ( ! class_exists( 'TimJensen\ACF\Field_Group_Values' ) ) :
 				$term_id = (int) substr( $this->post_id, 5 );
 
 				return get_term_meta( $term_id, $field_key, true );
-			} elseif('user_' === substr( (string) $this->post_id, 0, 5 )) {
+			} elseif ( 'user_' === substr( (string) $this->post_id, 0, 5 ) ) {
 				$user_id = (int) substr( $this->post_id, 5 );
-				return get_user_meta( $user_id, $field_key, true ); 
+
+				return get_user_meta( $user_id, $field_key, true );
 			}
 
 			return get_post_meta( $this->post_id, $field_key, true );
