@@ -35,6 +35,13 @@ class Get_All_Custom_Field_Meta_System_Test extends TestCase {
 	public $term_id;
 
 	/**
+	 * ID of the test user.
+	 *
+	 * @var int
+	 */
+	public $user_id;
+
+	/**
 	 * Test setup
 	 */
 	public function setUp() {
@@ -43,11 +50,13 @@ class Get_All_Custom_Field_Meta_System_Test extends TestCase {
 		$wp_tests_lib  = new \WP_UnitTestCase();
 		$this->post_id = $wp_tests_lib->factory->post->create();
 		$this->term_id = $wp_tests_lib->factory->term->create();
+		$this->user_id = $wp_tests_lib->factory->user->create();
 
 		$data_type_callbacks = [
 			'post_meta' => 'update_post_meta',
 			'term_meta' => 'update_term_meta',
 			'options'   => 'update_option',
+			'user_meta' => 'update_user_meta',
 		];
 
 		array_walk( $data_type_callbacks, function ( $callback, $data_type ) {
@@ -72,6 +81,12 @@ class Get_All_Custom_Field_Meta_System_Test extends TestCase {
 					case 'term_meta':
 						$callback_args = [
 							$this->term_id,
+							$meta_key,
+							$meta_value,
+						];
+					case 'user_meta':
+						$callback_args = [
+							$this->user_id,
 							$meta_key,
 							$meta_value,
 						];
@@ -134,6 +149,22 @@ class Get_All_Custom_Field_Meta_System_Test extends TestCase {
 		array_walk( $test_keys, function( $lookup_value, $meta_key ) use ( $get_all_custom_field_meta ) {
 			$this->assertEquals(
 				get_term_meta( $this->term_id, $meta_key, true ),
+				$this->get_value_by_key( $lookup_value, $get_all_custom_field_meta )
+			);
+		} );
+	}
+
+	/**
+	 * Test that retrieved field values match what is returned by get_user_meta.
+	 */
+	public function test_user_meta_field_group_values() {
+		$get_all_custom_field_meta = get_all_custom_field_meta( "user_{$this->user_id}", $this->config, $this->clone_fields );
+
+		$test_keys = include TEST_DATA_DIR . '/test_keys.php';
+
+		array_walk( $test_keys, function( $lookup_value, $meta_key ) use ( $get_all_custom_field_meta ) {
+			$this->assertEquals(
+				get_user_meta( $this->user_id, $meta_key, true ),
 				$this->get_value_by_key( $lookup_value, $get_all_custom_field_meta )
 			);
 		} );
