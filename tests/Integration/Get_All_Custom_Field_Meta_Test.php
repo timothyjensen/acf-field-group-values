@@ -53,6 +53,11 @@ class Get_All_Custom_Field_Meta_Test extends TestCase {
 
 				return empty( $test_data[ $key ] ) ? '' : $test_data[ $key ];
 			},
+			'get_user_meta' => function ( $post_id = null, $key, $single = false ) {
+				$test_data = \get_test_data( 'user_meta' );
+
+				return empty( $test_data[ $key ] ) ? '' : $test_data[ $key ];
+			},
 		] );
 
 		$this->instance = new Field_Group_Values( $this->post_id, $this->config, $this->clone_fields );
@@ -153,7 +158,7 @@ class Get_All_Custom_Field_Meta_Test extends TestCase {
 
 	/**
 	 * Confirm values returned by get_all_custom_field_meta() are equal to values
-	 * returned by get_post_meta().
+	 * returned by get_term_meta().
 	 */
 	public function test_term_meta_get_all_custom_field_meta() {
 		$get_all_custom_field_meta = get_all_custom_field_meta( 'term_0', $this->config, $this->clone_fields );
@@ -163,6 +168,23 @@ class Get_All_Custom_Field_Meta_Test extends TestCase {
 		array_walk( $test_keys, function ( $lookup_value, $meta_key ) use ( $get_all_custom_field_meta ) {
 			$this->assertEquals(
 				get_term_meta( 0, $meta_key, true ),
+				$this->get_value_by_key( $lookup_value, $get_all_custom_field_meta )
+			);
+		} );
+	}
+
+	/**
+	 * Confirm values returned by get_all_custom_field_meta() are equal to values
+	 * returned by get_user_meta().
+	 */
+	public function test_user_meta_get_all_custom_field_meta() {
+		$get_all_custom_field_meta = get_all_custom_field_meta( 'user_0', $this->config, $this->clone_fields );
+
+		$test_keys = include TEST_DATA_DIR . '/test_keys.php';
+
+		array_walk( $test_keys, function ( $lookup_value, $meta_key ) use ( $get_all_custom_field_meta ) {
+			$this->assertEquals(
+				get_user_meta( 0, $meta_key, true ),
 				$this->get_value_by_key( $lookup_value, $get_all_custom_field_meta )
 			);
 		} );

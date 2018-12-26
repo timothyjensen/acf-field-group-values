@@ -81,6 +81,11 @@ class Field_Group_Values_Integration_Test extends TestCase {
 
 				return empty( $test_data[ $key ] ) ? '' : $test_data[ $key ];
 			},
+			'get_user_meta' => function ( $post_id = null, $key, $single = false ) {
+				$test_data = \get_test_data( 'user_meta' );
+
+				return empty( $test_data[ $key ] ) ? '' : $test_data[ $key ];
+			},
 		] );
 
 		$this->instance = new Field_Group_Values(

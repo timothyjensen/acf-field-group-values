@@ -60,6 +60,11 @@ class Field_Group_Values_Unit_Test extends TestCase {
 
 				return empty( $test_data[ $key ] ) ? '' : $test_data[ $key ];
 			},
+			'get_user_meta' => function ( $post_id = null, $key, $single = false ) {
+				$test_data = \get_test_data( 'user_meta' );
+
+				return empty( $test_data[ $key ] ) ? '' : $test_data[ $key ];
+			},
 		] );
 
 		$this->instance = new Field_Group_Values( $this->post_id, $this->config, $this->clone_fields );
@@ -143,6 +148,11 @@ class Field_Group_Values_Unit_Test extends TestCase {
 		$this->instance = new Field_Group_Values( 'term_2', $this->config );
 		$field_value    = $this->get_protected_method_result( [ 'group_text' ] );
 		$this->assertEquals( 'TERM META: Group text field', $field_value );
+
+		// User meta.
+		$this->instance = new Field_Group_Values( 'user_2', $this->config );
+		$field_value    = $this->get_protected_method_result( [ 'group_text' ] );
+		$this->assertEquals( 'USER META: Group text field', $field_value );
 	}
 
 	/**
