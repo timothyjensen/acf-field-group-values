@@ -1,13 +1,17 @@
 # Change Log for ACF Field Group Values
 
+## 3.2.0 - 2020-10-14
+### Added
+- Added support for returning field labels along with values.
+
 ## 3.1.0 - 2018-12-26
 ### Added
 - Added support for user meta - props @Boldairdev.
 
 ## 3.0.0 - 2018-07-21
 ### Changed
-- Changed array keys used for storing clone fields to be more consistent with how ACF stores the meta in the database. **This is a breaking change for those using clone fields.** 
-- Update tests to reflect the change related to storing clone field values 
+- Changed array keys used for storing clone fields to be more consistent with how ACF stores the meta in the database. **This is a breaking change for those using clone fields.**
+- Update tests to reflect the change related to storing clone field values
 - Renamed test data directory
 
 ### Added
@@ -59,7 +63,7 @@
 
 ## 2.0.0 - 2017-11-17
 ### Changed
-- The second argument passed to `get_all_custom_field_meta()` must include the field key; pass `$config` instead of 
+- The second argument passed to `get_all_custom_field_meta()` must include the field key; pass `$config` instead of
 `$config['fields']`.
 - Bumped PHP requirement to 7.0+.
 
@@ -76,7 +80,7 @@
 
 ### Added
 - Refactored into a class.
-- Support for custom fields stored as options. 
+- Support for custom fields stored as options.
 - Published as a composer package and WordPress plugin.
 
 ## 1.2.5 - 2017-10-19
