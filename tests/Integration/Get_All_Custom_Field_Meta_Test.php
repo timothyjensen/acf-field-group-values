@@ -92,6 +92,50 @@ class Get_All_Custom_Field_Meta_Test extends TestCase {
 			$this->instance->get_results(),
 			get_all_custom_field_meta( $this->post_id, $this->config, $this->clone_fields )
 		);
+
+		$field_group_values_object = new Field_Group_Values( $this->post_id, $this->config, $this->clone_fields, true );
+
+		$this->assertEquals(
+			$field_group_values_object->get_results(),
+			get_all_custom_field_meta( $this->post_id, $this->config, $this->clone_fields, true )
+		);
+	}
+
+	/**
+	 * Test that including labels in the results does not affect the returned values.
+	 */
+	public function test_values_unaffected_by_labels() {
+		$field_group_values_object = new Field_Group_Values( $this->post_id, $this->config, $this->clone_fields );
+		$values_only = $field_group_values_object->get_results();
+
+		$field_group_values_object2 = new Field_Group_Values( $this->post_id, $this->config, $this->clone_fields, true );
+		$values_and_labels = $field_group_values_object2->get_results();
+
+		$test_keys = include TEST_DATA_DIR . '/test_keys.php';
+
+		array_walk( $test_keys, function ( $lookup_value, $meta_key ) use ( $values_only, $values_and_labels ) {
+			$this->assertEquals(
+				$this->get_value_by_key( $lookup_value, $values_only ),
+				$this->get_value_by_key( $lookup_value, $values_and_labels )['value']
+			);
+		} );
+	}
+
+	/**
+	 * Test whether labels included in the results match the config.
+	 */
+	public function test_return_labels_with_values() {
+		$field_group_values_object = new Field_Group_Values( $this->post_id, $this->config, $this->clone_fields, true );
+		$values_and_labels = $field_group_values_object->get_results();
+
+		$test_keys = include TEST_DATA_DIR . '/test_keys.php';
+
+		array_walk( $test_keys, function ( $lookup_value, $meta_key ) use ( $values_and_labels ) {
+			$this->assertEquals(
+				get_test_data( 'labels' )[ $meta_key ],
+				$this->get_value_by_key( $lookup_value, $values_and_labels )['label']
+			);
+		} );
 	}
 
 	/**

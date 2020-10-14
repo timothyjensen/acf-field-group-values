@@ -44,6 +44,13 @@ if ( ! class_exists( 'TimJensen\ACF\Field_Group_Values' ) ) :
 		protected $post_id;
 
 		/**
+		 * Whether to include field labels in the results.
+		 *
+		 * @var bool
+		 */
+		protected $include_labels = false;
+
+		/**
 		 * Stores all the custom field values.
 		 *
 		 * @var array
@@ -53,14 +60,16 @@ if ( ! class_exists( 'TimJensen\ACF\Field_Group_Values' ) ) :
 		/**
 		 * Field_Group_Values constructor.
 		 *
-		 * @param int|string $post_id      Post ID, 'option', or 'term_{id}'.
-		 * @param array      $config       Field group configuration array.
-		 * @param array      $clone_fields Field group configuration arrays for cloned fields/groups.
+		 * @param int|string $post_id        Post ID, 'option', or 'term_{id}'.
+		 * @param array      $config         Field group configuration array.
+		 * @param array      $clone_fields   Field group configuration arrays for cloned fields/groups.
+		 * @param bool       $include_labels Whether to include labels in the results.
 		 */
-		public function __construct( $post_id, array $config, $clone_fields = [] ) {
-			$this->post_id      = $post_id;
-			$this->config       = $config['fields'];
-			$this->clone_fields = array_merge( [ $config ], $clone_fields );
+		public function __construct( $post_id, array $config, $clone_fields = [], $include_labels = false ) {
+			$this->post_id        = $post_id;
+			$this->config         = $config['fields'];
+			$this->include_labels = $include_labels;
+			$this->clone_fields   = array_merge( [ $config ], $clone_fields );
 		}
 
 		/**
@@ -414,7 +423,14 @@ if ( ! class_exists( 'TimJensen\ACF\Field_Group_Values' ) ) :
 				? "{$this->result_key_prefix}_{$field['name']}"
 				: $field['name'];
 
-			$this->results[ $result_key ] = $field_value;
+			$result = $this->include_labels
+				? [
+					'value' => $field_value,
+					'label' => $field['label'],
+				]
+				: $field_value;
+
+			$this->results[ $result_key ] = $result;
 		}
 
 		/**
