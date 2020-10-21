@@ -68,6 +68,16 @@ As of version 2.0.0 the `$config` argument must contain all data from the acf fi
     $acf_user_values = get_all_custom_field_meta( $user_id, $config );
     ```
 
+1. Build a multidimensional array containing all ACF block data for the specified field group:
+
+    ```php
+    <?php
+    // The $block variable is passed to the render callback or template.
+    $data = $block['data'];
+
+    $acf_block_data = get_structured_block_data( $data, $config );
+    ```
+
 1. In order to retrieve values for clone fields you must pass a third argument: all field group arrays that contain the fields that will be cloned.
 
     ```php

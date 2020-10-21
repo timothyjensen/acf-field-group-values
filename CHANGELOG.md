@@ -1,5 +1,9 @@
 # Change Log for ACF Field Group Values
 
+## 3.3.0 - 2020-10-21
+### Added
+- Added support for ACF blocks.
+
 ## 3.2.0 - 2020-10-14
 ### Added
 - Added support for returning field labels along with values.

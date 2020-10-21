@@ -7,7 +7,7 @@
  * Author URI:      https://www.timjensen.us
  * Text Domain:     acf-field-group-values
  * Domain Path:     /languages
- * Version:         3.2.0
+ * Version:         3.3.0
  *
  * @package         TimJensen\ACF\Field_Group_Values
  * @license         GPL-3.0-or-later
@@ -62,3 +62,4 @@ if ( version_compare( PHP_VERSION, '7.0', '<' ) ) {
 
 require __DIR__ . '/src/Field_Group_Values.php';
 require __DIR__ . '/src/get_all_custom_field_meta.php';
+require __DIR__ . '/src/get_structured_block_data.php';

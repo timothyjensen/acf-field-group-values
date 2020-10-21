@@ -84,6 +84,7 @@ class Get_All_Custom_Field_Meta_System_Test extends TestCase {
 							$meta_key,
 							$meta_value,
 						];
+						break;
 					case 'user_meta':
 						$callback_args = [
 							$this->user_id,

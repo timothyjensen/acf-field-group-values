@@ -29,7 +29,8 @@
             "TimJensen\\ACF\\": "src/"
         },
         "files": [
-            "src/get_all_custom_field_meta.php"
+            "src/get_all_custom_field_meta.php",
+            "src/get_structured_block_data.php"
         ]
     },
     "autoload-dev": {

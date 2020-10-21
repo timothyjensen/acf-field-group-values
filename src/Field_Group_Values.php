@@ -37,11 +37,11 @@ if ( ! class_exists( 'TimJensen\ACF\Field_Group_Values' ) ) :
 		protected $clone_fields;
 
 		/**
-		 * Post ID, 'option', or 'term_{id}'.
+		 * Post ID, 'option', 'term_{id}', or ['data' => [...]].
 		 *
-		 * @var int|string
+		 * @var mixed
 		 */
-		protected $post_id;
+		protected $object_id;
 
 		/**
 		 * Whether to include field labels in the results.
@@ -60,13 +60,13 @@ if ( ! class_exists( 'TimJensen\ACF\Field_Group_Values' ) ) :
 		/**
 		 * Field_Group_Values constructor.
 		 *
-		 * @param int|string $post_id        Post ID, 'option', or 'term_{id}'.
-		 * @param array      $config         Field group configuration array.
-		 * @param array      $clone_fields   Field group configuration arrays for cloned fields/groups.
-		 * @param bool       $include_labels Whether to include labels in the results.
+		 * @param mixed $object_id      Post ID, 'option', 'term_{id}', or ['data' => [...]].
+		 * @param array $config         Field group configuration array.
+		 * @param array $clone_fields   Field group configuration arrays for cloned fields/groups.
+		 * @param bool  $include_labels Whether to include labels in the results.
 		 */
-		public function __construct( $post_id, array $config, $clone_fields = [], $include_labels = false ) {
-			$this->post_id        = $post_id;
+		public function __construct( $object_id, array $config, $clone_fields = [], $include_labels = false ) {
+			$this->object_id      = $object_id;
 			$this->config         = $config['fields'];
 			$this->include_labels = $include_labels;
 			$this->clone_fields   = array_merge( [ $config ], $clone_fields );
@@ -171,20 +171,55 @@ if ( ! class_exists( 'TimJensen\ACF\Field_Group_Values' ) ) :
 		 * @return mixed
 		 */
 		protected function get_field_value( string $field_key ) {
-			// Allow 'option' or 'options'.
-			if ( in_array( $this->post_id, [ 'option', 'options' ], true ) ) {
-				return get_option( "options_{$field_key}" );
-			} elseif ( 'term_' === substr( (string) $this->post_id, 0, 5 ) ) {
-				$term_id = (int) substr( $this->post_id, 5 );
+			switch ( $this->get_object_type() ) {
+				case 'block':
+					$value = $this->object_id['data'][ $field_key ] ?? '';
+					break;
+				case 'option':
+					$value = get_option( "options_{$field_key}" );
+					break;
+				case 'term':
+					$term_id = (int) substr( $this->object_id, 5 );
 
-				return get_term_meta( $term_id, $field_key, true );
-			} elseif ( 'user_' === substr( (string) $this->post_id, 0, 5 ) ) {
-				$user_id = (int) substr( $this->post_id, 5 );
+					$value = get_term_meta( $term_id, $field_key, true );
+					break;
+				case 'user':
+					$user_id = (int) substr( $this->object_id, 5 );
 
-				return get_user_meta( $user_id, $field_key, true );
+					$value = get_user_meta( $user_id, $field_key, true );
+					break;
+				case 'post':
+				default:
+					$value = get_post_meta( $this->object_id, $field_key, true );
+					break;
 			}
 
-			return get_post_meta( $this->post_id, $field_key, true );
+			return $value;
+		}
+
+		/**
+		 * Returns the object type.
+		 *
+		 * @return string
+		 */
+		protected function get_object_type() {
+			if ( isset( $this->object_id['data'] ) ) {
+				return 'block';
+			}
+
+			if ( 'option' === $this->object_id || 'options' === $this->object_id ) {
+				return 'option';
+			}
+
+			if ( substr( (string) $this->object_id, 0, 5 ) === 'term_' ) {
+				return 'term';
+			}
+
+			if ( substr( (string) $this->object_id, 0, 5 ) === 'user_' ) {
+				return 'user';
+			}
+
+			return 'post';
 		}
 
 		/**
@@ -394,12 +429,12 @@ if ( ! class_exists( 'TimJensen\ACF\Field_Group_Values' ) ) :
 		/**
 		 * Returns the custom field values for repeater fields.
 		 *
-		 * @param array  $field           ACF field configuration.
-		 * @param string $parent_meta_key Field key.
-		 * @param string $field_value     Field value.
+		 * @param array      $field           ACF field configuration.
+		 * @param string     $parent_meta_key Field key.
+		 * @param string|int $field_value     Field value.
 		 * @return void
 		 */
-		protected function get_repeater_field_values( array $field, string $parent_meta_key, string $field_value ) {
+		protected function get_repeater_field_values( array $field, string $parent_meta_key,  $field_value ) {
 			$results = $this->results;
 
 			for ( $i = 0; $i < $field_value; $i ++ ) {
