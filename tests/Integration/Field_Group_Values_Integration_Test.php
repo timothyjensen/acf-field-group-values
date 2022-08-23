@@ -59,7 +59,7 @@ class Field_Group_Values_Integration_Test extends TestCase {
 	/**
 	 * Test setup
 	 */
-	public function setUp() {
+	public function setUp(): void {
 		Monkey\setUp();
 		parent::setUp();
 
@@ -103,7 +103,7 @@ class Field_Group_Values_Integration_Test extends TestCase {
 	/**
 	 * Test tear down.
 	 */
-	public function tearDown() {
+	public function tearDown(): void {
 		Monkey\tearDown();
 		parent::tearDown();
 	}

@@ -12,17 +12,20 @@
         }
     ],
     "config": {
-        "sort-order": true
+        "sort-order": true,
+        "allow-plugins": {
+            "infection/extension-installer": true
+        }
     },
     "minimum-stability": "dev",
     "prefer-stable": true,
     "require": {
-        "php": "^7.0"
+        "php": "^7.3 || ^8.0"
     },
     "require-dev": {
-        "infection/infection": "^0.7.1",
-        "phpunit/phpunit": "^6",
-        "brain/monkey": "^2"
+        "infection/infection": "*",
+        "phpunit/phpunit": "^9.5.23",
+        "brain/monkey": "*"
     },
     "autoload": {
         "psr-4": {

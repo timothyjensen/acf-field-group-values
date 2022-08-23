@@ -44,7 +44,7 @@ class Get_All_Custom_Field_Meta_System_Test extends TestCase {
 	/**
 	 * Test setup
 	 */
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 
 		$wp_tests_lib  = new \WP_UnitTestCase();
@@ -102,7 +102,7 @@ class Get_All_Custom_Field_Meta_System_Test extends TestCase {
 	 * Test that the old config format (pre 2.0) throws a PHP warning but still returns correct values.
 	 */
 	public function test_old_config_format_returns_correct_values() {
-		$this->expectException( \PHPUnit\Framework\Error\Warning::class );
+		$this->expectWarning();
 
 		$this->assertEquals(
 			get_all_custom_field_meta( $this->post_id, $this->config, $this->clone_fields ),

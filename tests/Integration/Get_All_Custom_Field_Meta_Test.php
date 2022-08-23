@@ -31,7 +31,7 @@ class Get_All_Custom_Field_Meta_Test extends TestCase {
 	/**
 	 * Test setup
 	 */
-	public function setUp() {
+	public function setUp(): void {
 		Monkey\setUp();
 		parent::setUp();
 
@@ -66,7 +66,7 @@ class Get_All_Custom_Field_Meta_Test extends TestCase {
 	/**
 	 * Test tear down.
 	 */
-	public function tearDown() {
+	public function tearDown(): void {
 		Monkey\tearDown();
 		parent::tearDown();
 	}
@@ -75,7 +75,7 @@ class Get_All_Custom_Field_Meta_Test extends TestCase {
 	 * Test that the old config format (pre 2.0) throws a PHP warning but still returns correct values.
 	 */
 	public function test_old_config_format_returns_correct_values() {
-		$this->expectException( \PHPUnit\Framework\Error\Warning::class );
+		$this->expectWarning();
 
 		$this->assertEquals(
 			get_all_custom_field_meta( $this->post_id, $this->config, $this->clone_fields ),

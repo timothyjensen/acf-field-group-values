@@ -51,7 +51,7 @@ abstract class TestCase extends PHPUnitTestCase {
 	 */
 	public $meta_key = '';
 
-	public function setUp() {
+	public function setUp(): void {
 		$this->config = json_decode( file_get_contents( TEST_DATA_DIR . '/test_field_group.json' ), true );
 
 		$clone_field_1      = json_decode( file_get_contents( TEST_DATA_DIR . '/test_clone_group.json' ), true );

@@ -7,7 +7,7 @@
  * Author URI:      https://www.timjensen.us
  * Text Domain:     acf-field-group-values
  * Domain Path:     /languages
- * Version:         3.3.0
+ * Version:         3.4.0
  *
  * @package         TimJensen\ACF\Field_Group_Values
  * @license         GPL-3.0-or-later
@@ -17,7 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	die();
 }
 
-if ( version_compare( PHP_VERSION, '7.0', '<' ) ) {
+if ( version_compare( PHP_VERSION, '7.3', '<' ) ) {
 	/**
 	 * Initialize deactivation functions.
 	 *
