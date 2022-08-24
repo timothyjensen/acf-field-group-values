@@ -40,5 +40,8 @@
         "psr-4": {
             "TimJensen\\ACF\\Tests\\": "tests/"
         }
+    },
+    "scripts": {
+      "unittest": "vendor/bin/phpunit"
     }
 }

@@ -1,0 +1,43 @@
+name: Unit Test
+
+on:
+  # Run on pushes to select branches and on all pull requests.
+  push:
+    branches:
+      - master
+      - develop
+  pull_request:
+  # Allow manually triggering the workflow.
+  workflow_dispatch:
+
+# Cancels all previous workflow runs for the same branch that have not yet completed.
+concurrency:
+  # The concurrency group contains the workflow name and the branch name.
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  unit-test:
+    name: Unit test /  PHP ${{ matrix.php }}
+
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        php: ['7.3', '7.4', '8.0', '8.1']
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up PHP environment
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          coverage: none
+
+      - name: Install Composer dependencies
+        uses: ramsey/composer-install@v2
+
+      - name: Run unit tests
+        run: composer run-script unittest
