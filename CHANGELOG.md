@@ -1,5 +1,13 @@
 # Change Log for ACF Field Group Values
 
+## 3.4.0 - 2022-08-23
+### Added
+- Added support for PHP 8.
+- Run tests via GitHub actions.
+
+### Removed
+- Removed support for PHP versions less than 7.3.
+
 ## 3.3.0 - 2020-10-21
 ### Added
 - Added support for ACF blocks.

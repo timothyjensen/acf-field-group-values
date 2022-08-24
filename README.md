@@ -1,12 +1,10 @@
-[![PHP Version](https://img.shields.io/badge/php-7.0%2B-blue.svg)](https://packagist.org/packages/timothyjensen/acf-field-group-values)
-[![Build Status](https://travis-ci.org/timothyjensen/acf-field-group-values.svg?branch=master)](https://travis-ci.org/timothyjensen/acf-field-group-values)
-[![codecov](https://codecov.io/gh/timothyjensen/acf-field-group-values/branch/master/graph/badge.svg)](https://codecov.io/gh/timothyjensen/acf-field-group-values)
+[![PHP Version](https://img.shields.io/badge/php-7.3%2B-blue.svg)](https://packagist.org/packages/timothyjensen/acf-field-group-values)
 
 # ACF Field Group Values
 This component provides a convenient alternative to ACF's `get_field()` function.  It can be installed as a WordPress plugin, or required as a dependency (preferred) within your theme or plugin.
 
 ## Requirements
-- PHP 7+
+- PHP 7.3+
 
 ## Installation
 The recommended way to install this component is with Composer:
